@@ -1,0 +1,32 @@
+name: Vite Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Using LTS version of Node.js
+
+    # Install pnpm package manager
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    # Install dependencies using pnpm
+    - name: Install frontend dependencies
+      run: pnpm install
+
+    # Build the project using pnpm
+    - name: Build frontend
+      run: pnpm build

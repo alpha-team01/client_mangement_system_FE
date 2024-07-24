@@ -1,0 +1,93 @@
+[
+  {
+    "exam_id": "1",
+    "exam_name": "Test Exam 1",
+    "exam_code": "EXM1233",
+    "exam_type": "Test",
+    "exam_date": "2021-01-01",
+    "exam_duration": "1 hour",
+    "exam_status": "Active",
+    "exam_subject": "Test",
+    "exam_description": "This is a test exam",
+    "exam_location": "Test Location",
+    "exam_category": "Test",
+    "exam_priority": "High",
+    "exam_proctors": ["Proctor 1", "Proctor 2"],
+
+    "exam_start_date": "2021-01-01",
+    "exam_end_date": "2021-01-01"
+  },
+  {
+    "exam_id": "2",
+    "exam_name": "Test Exam 2",
+    "exam_code": "EXM1234",
+    "exam_type": "Test",
+    "exam_date": "2021-01-01",
+    "exam_duration": "1 hour",
+    "exam_status": "Active",
+    "exam_subject": "Test",
+    "exam_description": "This is a test exam",
+    "exam_location": "Test Location",
+    "exam_category": "Test",
+    "exam_priority": "High",
+    "exam_proctors": ["Proctor 1", "Proctor 2"],
+
+    "exam_start_date": "2021-01-01",
+    "exam_end_date": "2021-01-01"
+  },
+  {
+    "exam_id": "3",
+    "exam_name": "Test Exam 3",
+    "exam_code": "EXM1245",
+    "exam_type": "Test",
+    "exam_date": "2021-01-01",
+    "exam_duration": "1 hour",
+    "exam_status": "Upcoming",
+    "exam_subject": "Test",
+    "exam_description": "This is a test exam",
+    "exam_location": "Test Location",
+    "exam_category": "Test",
+    "exam_priority": "High",
+    "exam_proctors": ["Proctor 1", "Proctor 2"],
+
+    "exam_start_date": "2021-01-01",
+    "exam_end_date": "2021-01-01"
+  },
+  {
+    "exam_id": "4",
+    "exam_name": "Test Exam 4",
+    "exam_code": "EXM1246",
+    "exam_type": "Test",
+    "exam_date": "2021-01-01",
+    "exam_duration": "1 hour",
+    "exam_status": "Upcoming",
+    "exam_subject": "Test",
+    "exam_description": "This is a test exam",
+    "exam_location": "Test Location",
+    "exam_category": "Test",
+    "exam_priority": "High",
+    "exam_proctors": ["Proctor 1", "Proctor 2"],
+
+    "exam_start_date": "2021-01-01",
+    "exam_end_date": "2021-01-01"
+  },
+  {
+    "exam_id": "5",
+    "exam_name": "Test Exam 5",
+    "exam_code": "EXM1247",
+    "exam_type": "Test",
+    "exam_date": "2021-01-01",
+    "exam_duration": "1 hour",
+    "exam_status": "Upcoming",
+    "exam_subject": "Test",
+    "exam_description": "This is a test exam",
+    "exam_location": "Test Location",
+    "exam_category": "Test",
+    "exam_priority": "High",
+    "exam_proctors": ["Proctor 1", "Proctor 2", "Proctor 3"],
+
+    "exam_start_date": "2021-01-01",
+    "exam_end_date": "2021-01-01"
+  }
+  
+]
