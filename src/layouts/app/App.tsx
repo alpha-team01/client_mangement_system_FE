@@ -33,6 +33,7 @@ import HeaderNav from './HeaderNav.tsx';
 import FooterNav from './FooterNav.tsx';
 import { NProgress } from '../../components';
 import { PATH_LANDING } from '../../constants';
+import { doSignOut } from '../../firebase/auth.ts';
 
 const { Content } = Layout;
 
@@ -83,9 +84,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           content: 'signing you out',
         });
 
-        setTimeout(() => {
+        doSignOut().then(() => {
           navigate(PATH_LANDING.root);
-        }, 1000);
+        });
+
+        // setTimeout(() => {
+        // }, 1000);
       },
     },
   ];

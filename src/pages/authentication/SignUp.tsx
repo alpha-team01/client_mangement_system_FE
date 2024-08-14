@@ -21,6 +21,7 @@ import { useMediaQuery } from 'react-responsive';
 import { PATH_AUTH, PATH_DASHBOARD } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { doCreateUserWithEmailAndPassword } from '../../firebase/auth';
 
 const { Title, Text, Link } = Typography;
 
@@ -41,18 +42,21 @@ export const SignUpPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log('Success:', values);
     setLoading(true);
 
-    message.open({
-      type: 'success',
-      content: 'Account signup successful',
-    });
+    const result = await doCreateUserWithEmailAndPassword(values.email, values.password);
+    
+    
+    // message.open({
+    //   type: 'success',
+    //   content: 'Account signup successful',
+    // });
 
-    setTimeout(() => {
-      navigate(PATH_DASHBOARD.default);
-    }, 5000);
+    // setTimeout(() => {
+    //   navigate(PATH_DASHBOARD.default);
+    // }, 5000);
   };
 
   const onFinishFailed = (errorInfo: any) => {

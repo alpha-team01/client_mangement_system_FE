@@ -2,12 +2,6 @@ import { createBrowserRouter, useLocation } from 'react-router-dom';
 import {
   AccountDeactivePage,
   BiddingDashboardPage,
-  CorporateAboutPage,
-  CorporateContactPage,
-  CorporateFaqPage,
-  CorporateLicensePage,
-  CorporatePricingPage,
-  CorporateTeamPage,
   DefaultDashboardPage,
   EcommerceDashboardPage,
   Error400Page,
@@ -38,10 +32,8 @@ import {
   LogisticsDashboardPage,
   
 } from '../pages';
-import { TestPage } from '../pages/testTemplate/TestPage';
 import { OrgAdminPage } from '../pages/dashboards/OrgAdmin.tsx';
 import {
-  CorporateLayout,
   DashboardLayout,
   GuestLayout,
   UserAccountLayout,
@@ -162,38 +154,6 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/corporate',
-    element: <PageWrapper children={<CorporateLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: 'about',
-        element: <CorporateAboutPage />,
-      },
-      {
-        path: 'team',
-        element: <CorporateTeamPage />,
-      },
-      {
-        path: 'faqs',
-        element: <CorporateFaqPage />,
-      },
-      {
-        path: 'contact',
-        element: <CorporateContactPage />,
-      },
-      {
-        path: 'pricing',
-        element: <CorporatePricingPage />,
-      },
-      {
-        path: 'license',
-        element: <CorporateLicensePage />,
-      },
-    ],
-  },
-  {
     path: '/user-profile',
     element: <PageWrapper children={<UserAccountLayout />} />,
     errorElement: <ErrorPage />,
@@ -301,18 +261,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: '/test',
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: '',
-        element: <TestPage/>,
-      },
-    ],
-  },
+  
 ]);
 
 export default router;

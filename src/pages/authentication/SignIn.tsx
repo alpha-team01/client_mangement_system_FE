@@ -10,17 +10,20 @@ import {
   Row,
   theme,
   Typography,
-} from 'antd';
+} from "antd";
 import {
   FacebookFilled,
   GoogleOutlined,
   TwitterOutlined,
-} from '@ant-design/icons';
-import { Logo } from '../../components';
-import { useMediaQuery } from 'react-responsive';
-import { PATH_AUTH, PATH_DASHBOARD } from '../../constants';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+} from "@ant-design/icons";
+import { Logo } from "../../components";
+import { useMediaQuery } from "react-responsive";
+import { PATH_AUTH, PATH_DASHBOARD } from "../../constants";
+import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { doSignInWithEmailAndPassword } from "../../firebase/auth";
+import { useAuth } from "../../context/authContext/authContext";
+import React from "react";
 
 const { Title, Text, Link } = Typography;
 
@@ -30,7 +33,10 @@ type FieldType = {
   remember?: boolean;
 };
 
-export const SignInPage = () => {
+export const SignInPage = React.memo(() => {
+  const auth = useAuth();
+  const userLoggedIn = auth?.userLoggedIn;
+
   const {
     token: { colorPrimary },
   } = theme.useToken();
@@ -38,33 +44,44 @@ export const SignInPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  useEffect(() => {
+    if (userLoggedIn) {
+      navigate(PATH_DASHBOARD.default);
+    }
+  }, [userLoggedIn, navigate]);
+
+  const onFinish = useCallback(async (values: any) => {
+    console.log("Success:", values);
     setLoading(true);
 
-    message.open({
-      type: 'success',
-      content: 'Login successful',
-    });
+    try {
+      await doSignInWithEmailAndPassword(values);
+      if (auth?.userLoggedIn) {
+        navigate(PATH_DASHBOARD.default);
+      } else {
+        throw new Error("Login failed");
+      }
+    } catch (error) {
+      console.error("Failed to sign in", error);
+      message.error("Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }, [auth, navigate]);
 
-    // setTimeout(() => {
-      navigate(PATH_DASHBOARD.default);
-    // }, 5000);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
+  const onFinishFailed = useCallback((errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  }, []);
 
   return (
-    <Row style={{ minHeight: isMobile ? 'auto' : '100vh', overflow: 'hidden' }}>
+    <Row style={{ minHeight: isMobile ? "auto" : "100vh", overflow: "hidden" }}>
       <Col xs={24} lg={12}>
         <Flex
           vertical
           align="center"
           justify="center"
           className="text-center"
-          style={{ background: colorPrimary, height: '100%', padding: '1rem' }}
+          style={{ background: colorPrimary, height: "100%", padding: "1rem" }}
         >
           <Logo color="white" />
           <Title level={2} className="text-white">
@@ -79,10 +96,10 @@ export const SignInPage = () => {
       <Col xs={24} lg={12}>
         <Flex
           vertical
-          align={isMobile ? 'center' : 'flex-start'}
+          align={isMobile ? "center" : "flex-start"}
           justify="center"
           gap="middle"
-          style={{ height: '100%', padding: '2rem' }}
+          style={{ height: "100%", padding: "2rem" }}
         >
           <Title className="m-0">Login</Title>
           <Flex gap={4}>
@@ -95,8 +112,8 @@ export const SignInPage = () => {
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
             initialValues={{
-              email: 'demo@email.com',
-              password: 'demo123',
+              email: "demo@email.com",
+              password: "demo123",
               remember: true,
             }}
             onFinish={onFinish}
@@ -110,7 +127,7 @@ export const SignInPage = () => {
                   label="Email"
                   name="email"
                   rules={[
-                    { required: true, message: 'Please input your email' },
+                    { required: true, message: "Please input your email" },
                   ]}
                 >
                   <Input />
@@ -121,7 +138,7 @@ export const SignInPage = () => {
                   label="Password"
                   name="password"
                   rules={[
-                    { required: true, message: 'Please input your password!' },
+                    { required: true, message: "Please input your password!" },
                   ]}
                 >
                   <Input.Password />
@@ -152,7 +169,7 @@ export const SignInPage = () => {
             vertical={isMobile}
             gap="small"
             wrap="wrap"
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           >
             <Button icon={<GoogleOutlined />}>Sign in with Google</Button>
             <Button icon={<FacebookFilled />}>Sign in with Facebook</Button>
@@ -162,4 +179,4 @@ export const SignInPage = () => {
       </Col>
     </Row>
   );
-};
+});

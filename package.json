@@ -6,7 +6,7 @@
   "_id": "antd-multi-dashboard@1.1.0",
   "version": "1.4.2",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3000",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -68,7 +68,7 @@
     "lint-staged": "^15.2.0",
     "prettier": "3.1.1",
     "sass": "^1.66.1",
-    "storybook": "7.5.2",
+    "storybook": "^7.6.20",
     "storybook-addon-react-router-v6": "^2.0.8",
     "storybook-react-context": "^0.6.0",
     "typescript": "^5.0.2",
