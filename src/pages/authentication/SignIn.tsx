@@ -18,12 +18,13 @@ import {
 } from "@ant-design/icons";
 import { Logo } from "../../components";
 import { useMediaQuery } from "react-responsive";
-import { PATH_AUTH, PATH_DASHBOARD } from "../../constants";
+import { PATH_AUTH } from "../../constants/routes";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { doSignInWithEmailAndPassword } from "../../firebase/auth";
+import { doGoogleSignIn, doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useAuth } from "../../context/authContext/authContext";
 import React from "react";
+import { PATH_ADMIN } from "../../constants/routes";
 
 const { Title, Text, Link } = Typography;
 
@@ -43,10 +44,11 @@ export const SignInPage = React.memo(() => {
   const isMobile = useMediaQuery({ maxWidth: 769 });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
     if (userLoggedIn) {
-      navigate(PATH_DASHBOARD.default);
+      navigate(PATH_ADMIN.index);
     }
   }, [userLoggedIn, navigate]);
 
@@ -57,7 +59,7 @@ export const SignInPage = React.memo(() => {
     try {
       await doSignInWithEmailAndPassword(values);
       if (auth?.userLoggedIn) {
-        navigate(PATH_DASHBOARD.default);
+        navigate(PATH_ADMIN.index);
       } else {
         throw new Error("Login failed");
       }
@@ -72,6 +74,24 @@ export const SignInPage = React.memo(() => {
   const onFinishFailed = useCallback((errorInfo: any) => {
     console.log("Failed:", errorInfo);
   }, []);
+
+  const onFinishGoogle = useCallback( async () => {
+    setGoogleLoading(true);
+    
+    try {
+      await doGoogleSignIn();
+      if (auth?.userLoggedIn) {
+        navigate(PATH_ADMIN.index);
+      } else {
+        throw new Error("Login failed");
+      }
+    } catch (error) {
+      console.error("Failed to sign in", error);
+      message.error("Login failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [auth, navigate]);
 
   return (
     <Row style={{ minHeight: isMobile ? "auto" : "100vh", overflow: "hidden" }}>
@@ -171,7 +191,7 @@ export const SignInPage = React.memo(() => {
             wrap="wrap"
             style={{ width: "100%" }}
           >
-            <Button icon={<GoogleOutlined />}>Sign in with Google</Button>
+            <Button icon={<GoogleOutlined />} onClick={onFinishGoogle} loading={googleLoading}>Sign in with Google</Button>
             <Button icon={<FacebookFilled />}>Sign in with Facebook</Button>
             <Button icon={<TwitterOutlined />}>Sign in with Twitter</Button>
           </Flex>

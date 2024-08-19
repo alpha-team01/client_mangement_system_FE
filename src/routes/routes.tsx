@@ -16,7 +16,6 @@ import {
   ProjectsDashboardPage,
   SignInPage,
   SignUpPage,
-  SitemapPage,
   SocialDashboardPage,
   UserProfileActionsPage,
   UserProfileActivityPage,
@@ -30,6 +29,7 @@ import {
   WelcomePage,
   LearningDashboardPage,
   LogisticsDashboardPage,
+  DataEntryPage,
   
 } from '../pages';
 import { OrgAdminPage } from '../pages/dashboards/OrgAdmin.tsx';
@@ -40,6 +40,8 @@ import {
 } from '../layouts';
 import React, { ReactNode, useEffect } from 'react';
 import { AboutPage } from '../pages/About.tsx';
+import { AdminPage } from '../pages/admin/AdminPage.tsx';
+import { SuperAdminPage } from '../pages/superAdmin/SuperAdminPage.tsx';
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -138,18 +140,6 @@ const router = createBrowserRouter([
       {
         path: 'logistics',
         element: <LogisticsDashboardPage />,
-      },
-    ],
-  },
-  {
-    path: '/sitemap',
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: '',
-        element: <SitemapPage />,
       },
     ],
   },
@@ -261,6 +251,47 @@ const router = createBrowserRouter([
       },
     ],
   },
+  // admin routes
+  {
+    path: '/admin',
+    element: <PageWrapper children={<DashboardLayout />} />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        path: '',
+        element: <AdminPage />,
+      },
+    ]
+  },
+
+  // super admin routes
+  {
+    path : '/super-admin',
+    element: <PageWrapper children={<DashboardLayout />} />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        path: '',
+        element: <SuperAdminPage />,
+      },
+    ]
+  },
+
+  // data entry routes
+  {
+    path : '/data-entry',
+    element: <PageWrapper children={<DashboardLayout />} />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        path: '',
+        element: <DataEntryPage />,
+      },
+    ]
+  }
   
 ]);
 
