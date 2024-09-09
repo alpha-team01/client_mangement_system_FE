@@ -11,7 +11,7 @@ import {
 import { Card } from "../../components";
 import { useStylesContext } from "../../context";
 
-export const CustomerSearchS2 = () => {
+export const WorkPermitDetails = () => {
   const context = useStylesContext();
   const onFinish = (values: any) => {
     console.log("Success:", values);
@@ -59,12 +59,12 @@ export const CustomerSearchS2 = () => {
             <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>
                 <Form.Item
-                  label="Attach Offer Letter"
+                  label="Attach Work Permit"
                   name="country"
                   rules={[
                     {
                       required: true,
-                      message: "Please Attach your Offer Letter",
+                      message: "Please Attach you Work Permit",
                     },
                   ]}
                 >
@@ -73,16 +73,14 @@ export const CustomerSearchS2 = () => {
                   </Upload>
                 </Form.Item>
               </Col>
-            </Row>
-            <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>
                 <Form.Item
-                  label="Payment Slip"
+                  label="Add Slip"
                   name="country"
                   rules={[
                     {
                       required: true,
-                      message: "Please Attach your Payment Slip",
+                      message: "Please Attach your Slip",
                     },
                   ]}
                 >
@@ -92,24 +90,7 @@ export const CustomerSearchS2 = () => {
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={[20, 0]}>
-              <Col sm={10} lg={12}>
-                <Form.Item
-                  label=" "
-                  name="country"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please Enter Your Passport Number",
-                    },
-                  ]}
-                >
-                  <Upload {...props}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
-                </Form.Item>
-              </Col>
-            </Row>
+            
           </Form>
         </Card>
       </Col>

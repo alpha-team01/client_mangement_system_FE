@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Steps } from "antd";
+import React from "react";
+import { Flex, Steps, Row, Col,Divider } from "antd";
+import { CustomerSearchS2 } from "./CustomerSearchS2";
+import { WorkPermitDetails } from "./WorkPermitDetails";
 import { useStylesContext } from "../../context";
 import { Pending } from "./Pending";
 
@@ -10,15 +13,19 @@ export const DataEntryPage = () => {
   const items = [
     {
       title: "Finished",
+      description: "Registered"
     },
     {
       title: "Pending",
+      description: "Offer Information"
     },
     {
       title: "Pending",
+      description: "Work Permit Details"
     },
     {
       title: "Pending",
+      description: "Visa Information"
     },
   ];
   return (
@@ -37,6 +44,24 @@ export const DataEntryPage = () => {
       </div>
 
       {current === 1 && <Pending />}
+      {current === 2 && <WorkPermitDetails/>}
+      {/* <div>
+        <p></p>
+        <p></p>
+        <Row>
+          <Col sm={10} lg={12}>
+            <WorkPermitDetails/>
+          </Col>
+          <Col>
+            <Divider
+              style={{ borderColor: "red", border: "2px", height: "100%" }}
+            />
+          </Col>
+          <Col sm={10} lg={12}>
+            <CustomerSearchS2 />
+          </Col>
+        </Row>
+      </div> */}
     </>
   );
 };
