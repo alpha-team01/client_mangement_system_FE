@@ -1,7 +1,9 @@
 export { HomePage } from './Home.tsx';
-export { SitemapPage } from './Sitemap.tsx';
 export * from './dashboards';
-export * from './corporate';
+export * from './admin';
+export * from './superAdmin';
+export * from './dataEntry';
 export * from './userAccount';
 export * from './authentication';
 export * from './errors';
+

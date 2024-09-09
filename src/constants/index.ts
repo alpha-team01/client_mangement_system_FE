@@ -7,7 +7,6 @@ import {
   PATH_CAREERS,
   PATH_CHANGELOG,
   PATH_CONTACTS,
-  PATH_CORPORATE,
   PATH_DASHBOARD,
   PATH_DOCS,
   PATH_ERROR,
@@ -22,7 +21,6 @@ import {
   PATH_USER_MGMT,
   PATH_USER_PROFILE,
   PATH_LANDING,
-  PATH_SITEMAP,
   PATH_SOCIALS,
   PATH_ABOUT,
 } from './routes.ts';
@@ -36,15 +34,6 @@ const DASHBOARD_ITEMS = [
   { title: 'bidding', path: PATH_DASHBOARD.bidding },
   { title: 'learning', path: PATH_DASHBOARD.learning },
   { title: 'logistics', path: PATH_DASHBOARD.logistics },
-];
-
-const CORPORATE_ITEMS = [
-  { title: 'about', path: PATH_CORPORATE.about },
-  { title: 'team', path: PATH_CORPORATE.team },
-  { title: 'faq', path: PATH_CORPORATE.faqs },
-  { title: 'contact us', path: PATH_CORPORATE.contact },
-  { title: 'pricing', path: PATH_CORPORATE.pricing },
-  { title: 'license', path: PATH_CORPORATE.license },
 ];
 
 const USER_PROFILE_ITEMS = [
@@ -81,7 +70,6 @@ export {
   PATH_INBOX,
   PATH_PROJECTS,
   PATH_LAYOUT,
-  PATH_CORPORATE,
   PATH_CONTACTS,
   PATH_DASHBOARD,
   PATH_CHANGELOG,
@@ -99,9 +87,7 @@ export {
   PATH_SOCIAL,
   PATH_START,
   PATH_LANDING,
-  PATH_SITEMAP,
   DASHBOARD_ITEMS,
-  CORPORATE_ITEMS,
   USER_PROFILE_ITEMS,
   PATH_SOCIALS,
   AUTHENTICATION_ITEMS,

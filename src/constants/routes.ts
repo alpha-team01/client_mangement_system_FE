@@ -6,9 +6,7 @@ const ROOTS_LANDING = '/';
 const ROOTS_HOME = '/home';
 const ROOTS_TEST = '/test';
 const ROOTS_DASHBOARD = '/dashboards';
-const ROOTS_SITEMAP = '/sitemap';
 const ROOTS_LAYOUT = '/layouts';
-const ROOTS_CORPORATE = '/corporate';
 const ROOTS_PROFILE = '/user-profile';
 const ROOTS_SOCIAL = '/social';
 const ROOTS_BLOG = '/blog';
@@ -25,6 +23,10 @@ const ROOTS_INBOX = '/inbox';
 const ROOTS_CALENDAR = '/calendar';
 const ROOTS_ERRORS = '/errors';
 const ROOTS_ABOUT = '/about';
+
+const ROOTS_ADMIN = '/admin';
+const ROOTS_SUPER_ADMIN = '/super-admin';
+const ROOTS_DATA_ENTRY = '/data-entry';
 
 export const PATH_LANDING = {
   root: ROOTS_LANDING,
@@ -53,9 +55,6 @@ export const PATH_DASHBOARD = {
   logistics: path(ROOTS_DASHBOARD, '/logistics'),
 };
 
-export const PATH_SITEMAP = {
-  root: ROOTS_SITEMAP,
-};
 
 export const PATH_LAYOUT = {
   root: ROOTS_LAYOUT,
@@ -71,15 +70,6 @@ export const PATH_LAYOUT = {
   },
 };
 
-export const PATH_CORPORATE = {
-  root: ROOTS_CORPORATE,
-  about: path(ROOTS_CORPORATE, '/about'),
-  team: path(ROOTS_CORPORATE, '/team'),
-  faqs: path(ROOTS_CORPORATE, '/faqs'),
-  contact: path(ROOTS_CORPORATE, '/contact'),
-  pricing: path(ROOTS_CORPORATE, '/pricing'),
-  license: path(ROOTS_CORPORATE, '/license'),
-};
 
 export const PATH_USER_PROFILE = {
   root: ROOTS_PROFILE,
@@ -235,4 +225,28 @@ export const PATH_SOCIALS = {
 
 export const PATH_ABOUT = {
   root: ROOTS_ABOUT,
+};
+
+export const PATH_ADMIN = {
+  root: ROOTS_ADMIN,
+  index: path(ROOTS_ADMIN, '/index'),
+  users: path(ROOTS_ADMIN, '/users'),
+  roles: path(ROOTS_ADMIN, '/roles'),
+  permissions: path(ROOTS_ADMIN, '/permissions'),
+};
+
+export const PATH_SUPER_ADMIN = {
+  root: ROOTS_SUPER_ADMIN,
+  index: path(ROOTS_SUPER_ADMIN, '/index'),
+  users: path(ROOTS_SUPER_ADMIN, '/users'),
+  roles: path(ROOTS_SUPER_ADMIN, '/roles'),
+  permissions: path(ROOTS_SUPER_ADMIN, '/permissions'),
+};
+
+export const PATH_DATA_ENTRY = {
+  root: ROOTS_DATA_ENTRY,
+  index: path(ROOTS_DATA_ENTRY, '/index'),
+  users: path(ROOTS_DATA_ENTRY, '/users'),
+  roles: path(ROOTS_DATA_ENTRY, '/roles'),
+  permissions: path(ROOTS_DATA_ENTRY, '/permissions'),
 };
