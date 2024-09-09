@@ -21,7 +21,7 @@ const getItem = (
   key: React.Key,
   icon?: React.ReactNode,
   children?: MenuItem[],
-  type?: "group"
+  type?: "group",
 ): MenuItem => {
   return {
     key,
@@ -38,7 +38,7 @@ const itemsTest: MenuProps["items"] = [
     getItem(
       <Link to={PATH_DASHBOARD.projects}>Projects</Link>,
       "projects",
-      null
+      null,
     ),
   ]),
 
@@ -58,7 +58,7 @@ const itemsTest: MenuProps["items"] = [
       Roadmap
     </Link>,
     "product-roadmap",
-    <ProductOutlined />
+    <ProductOutlined />,
   ),
 ];
 
@@ -75,9 +75,11 @@ const superAdminItems: MenuProps["items"] = [
 ];
 
 const dataEntryItems: MenuProps["items"] = [
-  getItem("Data Entry", "data-entry", <PieChartOutlined />, [
-    getItem(<Link to="/data-entry">Data Entry</Link>, "data-entry", null),
-  ]),
+  getItem(
+    <Link to="/data-entry/information">Customer Registration</Link>,
+    "data-entry/information",
+  ),
+  getItem(<Link to="/data-entry">Search Customer</Link>, "data-entry"),
 ];
 
 const rootSubmenuKeys = ["dashboards", "corporate", "user-profile"];
