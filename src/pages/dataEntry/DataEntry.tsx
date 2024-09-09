@@ -1,12 +1,12 @@
-import React from "react";
-import { Flex, Steps, Row, Col } from "antd";
-import { CustomerSearchS2 } from "./CustomerSearchS2";
+import { useState } from "react";
+import { Steps } from "antd";
 import { useStylesContext } from "../../context";
-import { Divider } from "antd";
+import { Pending } from "./Pending";
 
 export const DataEntryPage = () => {
   const description = "This is a description.";
   const stylesContext = useStylesContext();
+  const [current, setCurrent] = useState(1);  
   const items = [
     {
       title: "Finished",
@@ -33,25 +33,10 @@ export const DataEntryPage = () => {
         }}
       >
         
-        <Steps current={1} labelPlacement="vertical" items={items} />
+        <Steps current={current} labelPlacement="vertical" items={items} />
       </div>
-      <div>
-        <p></p>
-        <p></p>
-        <Row>
-          <Col sm={10} lg={12}>
-            <CustomerSearchS2 />
-          </Col>
-          <Col>
-            <Divider
-              style={{ borderColor: "red", border: "2px", height: "100%" }}
-            />
-          </Col>
-          <Col sm={10} lg={12}>
-            <CustomerSearchS2 />
-          </Col>
-        </Row>
-      </div>
+
+      {current === 1 && <Pending />}
     </>
   );
 };
