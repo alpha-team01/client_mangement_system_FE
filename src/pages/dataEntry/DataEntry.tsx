@@ -32,6 +32,7 @@ export const DataEntryPage = () => {
           flexDirection: "column",
         }}
       >
+        
         <Steps current={1} labelPlacement="vertical" items={items} />
       </div>
       <div>
