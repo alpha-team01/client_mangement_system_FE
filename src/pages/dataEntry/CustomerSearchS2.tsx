@@ -4,14 +4,9 @@ import { message, Upload } from "antd";
 
 import {
   Button,
-  Checkbox,
   Col,
-  DatePicker,
-  Flex,
   Form,
-  Input,
   Row,
-  Select,
 } from "antd";
 import { Card } from "../../components";
 import { useStylesContext } from "../../context";
@@ -59,7 +54,7 @@ export const CustomerSearchS2 = () => {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="on"
-            requiredMark={false}
+            requiredMark={true}
           >
             <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>

@@ -94,7 +94,7 @@ export const UserProfileInformationPage = () => {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="on"
-            requiredMark={false}
+            // requiredMark={false}
           >
             <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>
@@ -193,7 +193,7 @@ export const UserProfileInformationPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your postal code!",
+                      // message: "Please enter your postal code!",
                     },
                   ]}
                 >
