@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Steps } from "antd";
 import React from "react";
-import { Flex, Steps, Row, Col, Descriptions } from "antd";
+import { Flex, Steps, Row, Col,Divider } from "antd";
 import { CustomerSearchS2 } from "./CustomerSearchS2";
 import { WorkPermitDetails } from "./WorkPermitDetails";
 import { useStylesContext } from "../../context";
@@ -45,7 +44,8 @@ export const DataEntryPage = () => {
       </div>
 
       {current === 1 && <Pending />}
-      <div>
+      {current === 2 && <WorkPermitDetails/>}
+      {/* <div>
         <p></p>
         <p></p>
         <Row>
@@ -61,7 +61,7 @@ export const DataEntryPage = () => {
             <CustomerSearchS2 />
           </Col>
         </Row>
-      </div>
+      </div> */}
     </>
   );
 };
