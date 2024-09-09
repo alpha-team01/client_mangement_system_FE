@@ -266,18 +266,18 @@ const router = createBrowserRouter([
   },
 
   // super admin routes
-  {
-    path : '/super-admin',
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: '',
-        element: <SuperAdminPage />,
-      },
-    ]
-  },
+  // {
+  //   path : '/super-admin',
+  //   element: <PageWrapper children={<DashboardLayout />} />,
+  //   errorElement: <ErrorPage />,
+  //   children: [
+  //     {
+  //       index: true,
+  //       path: '',
+  //       element: <SuperAdminPage />,
+  //     },
+  //   ]
+  // },
 
   // data entry routes
   {
@@ -289,6 +289,11 @@ const router = createBrowserRouter([
         index: true,
         path: '',
         element: <DataEntryPage />,
+      },
+      {
+        index: true,
+        path: 'dashboard',
+        element: <DefaultDashboardPage />,
       },
     ]
   }
