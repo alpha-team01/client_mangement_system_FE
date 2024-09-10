@@ -45,7 +45,7 @@ export const CustomerSearchS2 = () => {
   return (
     <Row {...context?.rowProps}>
       <Col span={24}>
-        <Card title="">
+        {/* <Card title=""> */}
           <Form
             name="user-profile-address-form"
             layout="vertical"
@@ -116,7 +116,7 @@ export const CustomerSearchS2 = () => {
               </Col>
             </Row>
           </Form>
-        </Card>
+        {/* </Card> */}
       </Col>
     </Row>
   );
