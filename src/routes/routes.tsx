@@ -30,6 +30,8 @@ import {
   LearningDashboardPage,
   LogisticsDashboardPage,
   DataEntryPage,
+  CustomerRegistration,
+  CustomerSearch,
 } from "../pages";
 import { OrgAdminPage } from "../pages/dashboards/OrgAdmin.tsx";
 import { DashboardLayout, GuestLayout, UserAccountLayout } from "../layouts";
@@ -282,13 +284,18 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        path: "",
+        path: "customer-status",
         element: <DataEntryPage />,
       },
       {
         index: true,
-        path: "information",
-        element: <UserProfileInformationPage />,
+        path: "register-customer",
+        element: <CustomerRegistration />,
+      },
+      {
+        index: true,
+        path: "search-customer",
+        element: <CustomerSearch />,
       },
     ],
   },
