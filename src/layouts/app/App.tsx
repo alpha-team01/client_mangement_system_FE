@@ -170,14 +170,6 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
                   }}
                 />
               </Tooltip>
-              <Input.Search
-                placeholder="search"
-                style={{
-                  width: isMobile ? '100%' : '400px',
-                  marginLeft: isMobile ? 0 : '.5rem',
-                }}
-                size="middle"
-              />
             </Flex>
             <Flex align="center" gap="small">
               <Tooltip title="Apps">

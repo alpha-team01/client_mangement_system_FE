@@ -76,10 +76,10 @@ const superAdminItems: MenuProps["items"] = [
 
 const dataEntryItems: MenuProps["items"] = [
   getItem(
-    <Link to="/data-entry/information">Customer Registration</Link>,
+    <Link to="/data-entry/register-customer">Customer Registration</Link>,
     "data-entry/information",
   ),
-  getItem(<Link to="/data-entry">Search Customer</Link>, "data-entry"),
+  getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "data-entry"),
 ];
 
 const rootSubmenuKeys = ["dashboards", "corporate", "user-profile"];
