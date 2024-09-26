@@ -1,17 +1,12 @@
 import { HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
-import { PageHeader } from "../../components";
+import { PageHeader } from "../../../components";
 import { Button, Card, Col, Form, Input, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Customer } from "../../../types";
 
-// Define types for data structure
-interface Customer {
-  key: string;
-  passportNo: string;
-  status: string;
-  actions: string;
-}
+
 
 export const CustomerSearch = () => {
   // State for search input

@@ -7,17 +7,16 @@ import {
   Button,
   UploadProps,
   message,
-  Flex,
   Table,
-  TableProps,
   ConfigProvider,
+  Flex,
 } from "antd";
 import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { ColumnsType, TableRowSelection } from "antd/es/table/interface";
-import { set } from "lodash";
+import { ColumnsType } from "antd/es/table/interface";
 
 interface DataType {
+  key: string;
   payment: string;
   amount: number;
   date: string;
@@ -25,7 +24,7 @@ interface DataType {
 
 const data: DataType[] = [];
 for (let i = 1; i <= 5; i++) {
-  data.push({ payment: "Payment " + i, amount: 100000, date: "2021-11-10" });
+  data.push({ key: `${i}`, payment: "Payment " + i, amount: 100000, date: "2021-11-10" });
 }
 
 const columns: ColumnsType<DataType> = [
@@ -53,27 +52,9 @@ export const Pending = () => {
   const [bordered, setBordered] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
   const [showFooter, setShowFooter] = useState(true);
-  const [rowSelection, setRowSelection] = useState<
-    TableRowSelection<DataType> | undefined
-  >(undefined);
-  const [tableLayout, setTableLayout] = useState();
-  const [yScroll, setYScroll] = useState(true);
 
-  const handleAmountChange = (value: number) => {
-    setRemainingAmount(totalAmount - firstPayment - value);
-  };
-
-  const handleRemainingAmountChange = (value: number) => {
-    setRemainingAmount(value);
-  };
-
-  const handleYScrollChange = (enable: boolean) => {
-    setYScroll(enable);
-  };
-
-  const defaultFooter = () => {
-    return <div>Remaining Amount: {remainingAmount}</div>;
-  }
+  // Handle Upload component logic properly with fileList prop
+  const [fileList, setFileList] = useState<any[]>([]);
 
   const props: UploadProps = {
     name: "file",
@@ -81,30 +62,28 @@ export const Pending = () => {
     headers: {
       authorization: "authorization-text",
     },
+    fileList, // Use fileList instead of value
     onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+      const { file, fileList: newFileList } = info;
+      setFileList(newFileList); // Update fileList when file is uploaded
+
+      if (file.status === "done") {
+        message.success(`${file.name} file uploaded successfully`);
+      } else if (file.status === "error") {
+        message.error(`${file.name} file upload failed.`);
       }
     },
   };
 
-  const scroll: { y?: number | string } = {};
-  if (yScroll) {
-    scroll.y = 300;
-  }
+  const defaultFooter = () => <div>Remaining Amount: {remainingAmount}</div>;
 
-  const tableProps: TableProps<DataType> = {
+  const tableProps = {
     bordered,
     showHeader,
     footer: showFooter ? defaultFooter : undefined,
-    rowSelection,
-    scroll,
-    tableLayout,
+    dataSource: data,
+    columns,
+    pagination: false,
   };
 
   return (
@@ -117,12 +96,9 @@ export const Pending = () => {
                 <Col sm={10} lg={12}>
                   <Form.Item
                     label="Attach Offer Letter"
-                    name="country"
+                    name="offerLetter"
                     rules={[
-                      {
-                        required: true,
-                        message: "Please Attach your Offer Letter",
-                      },
+                      { required: true, message: "Please Attach your Offer Letter" },
                     ]}
                   >
                     <Upload {...props}>
@@ -135,12 +111,9 @@ export const Pending = () => {
                 <Col sm={10} lg={12}>
                   <Form.Item
                     label="Payment Slip"
-                    name="country"
+                    name="paymentSlip"
                     rules={[
-                      {
-                        required: true,
-                        message: "Please Attach your Payment Slip",
-                      },
+                      { required: true, message: "Please Attach your Payment Slip" },
                     ]}
                   >
                     <Upload {...props}>
@@ -151,17 +124,16 @@ export const Pending = () => {
               </Row>
               <Row gutter={[20, 0]}>
                 <Col sm={10} lg={12}>
-                  <Form.Item name="country">
+                  <Form.Item name="additionalPayment">
                     <Upload {...props}>
-                      <Button icon={<PlusCircleOutlined />}>
-                        Add another payment
-                      </Button>
+                      <Button icon={<PlusCircleOutlined />}>Add another payment</Button>
                     </Upload>
                   </Form.Item>
                 </Col>
               </Row>
             </Form>
           </Col>
+
           <Col
             sm={10}
             lg={12}
@@ -191,7 +163,7 @@ export const Pending = () => {
                   pagination={false}
                   columns={columns}
                   dataSource={data}
-                  scroll={scroll}
+                  scroll={{ y: 300 }}
                 />
               </ConfigProvider>
             </Flex>
@@ -201,6 +173,3 @@ export const Pending = () => {
     </>
   );
 };
-
-
-// payment model

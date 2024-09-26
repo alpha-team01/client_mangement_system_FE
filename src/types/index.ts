@@ -42,6 +42,8 @@ import type { ActivityTimeline } from './timeline';
 import type { Exams } from './exams.ts';
 
 
+import type { Customer } from './customer.ts';
+
 
 export type {
   Exams,
@@ -77,4 +79,5 @@ export type {
   Pricing,
   Session,
   ActivityTimeline,
+  Customer,
 };

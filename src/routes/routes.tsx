@@ -29,9 +29,9 @@ import {
   WelcomePage,
   LearningDashboardPage,
   LogisticsDashboardPage,
-  DataEntryPage,
   CustomerRegistration,
   CustomerSearch,
+  CustomerStatus,
 } from "../pages";
 import { OrgAdminPage } from "../pages/dashboards/OrgAdmin.tsx";
 import { DashboardLayout, GuestLayout, UserAccountLayout } from "../layouts";
@@ -285,7 +285,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "customer-status",
-        element: <DataEntryPage />,
+        element: <CustomerStatus />,
       },
       {
         index: true,
