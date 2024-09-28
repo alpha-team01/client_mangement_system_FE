@@ -38,13 +38,7 @@ const DASHBOARD_ITEMS = [
 
 const USER_PROFILE_ITEMS = [
   { title: 'details', path: PATH_USER_PROFILE.details },
-  { title: 'preferences', path: PATH_USER_PROFILE.preferences },
-  { title: 'information', path: PATH_USER_PROFILE.personalInformation },
   { title: 'security', path: PATH_USER_PROFILE.security },
-  { title: 'activity', path: PATH_USER_PROFILE.activity },
-  { title: 'actions', path: PATH_USER_PROFILE.action },
-  { title: 'help', path: PATH_USER_PROFILE.help },
-  { title: 'feedback', path: PATH_USER_PROFILE.feedback },
 ];
 
 const AUTHENTICATION_ITEMS = [

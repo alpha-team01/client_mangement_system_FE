@@ -73,13 +73,6 @@ import {
             <Form
               name="user-profile-address-form"
               layout="vertical"
-              initialValues={{
-                country: "Kenya",
-                addressLine1: "828, 18282 ABC Drive, XYZ Rd",
-                city: "Nairobi",
-                postalCode: "00100",
-                preferred: true,
-              }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="on"

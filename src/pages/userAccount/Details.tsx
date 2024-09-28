@@ -31,7 +31,6 @@ export const UserProfileDetailsPage = () => {
         name="user-profile-details-form"
         layout="vertical"
         initialValues={{
-          id: '474e2cd2-fc79-49b8-98fe-dab443facede',
           username: 'kelvink96',
           firstName: 'Kelvin',
           middleName: 'Kiptum',
@@ -47,23 +46,6 @@ export const UserProfileDetailsPage = () => {
         requiredMark={false}
       >
         <Row gutter={[16, 0]}>
-          <Col sm={24} lg={24}>
-            <Form.Item<FieldType>
-              label="User ID"
-              name="id"
-              rules={[{ required: true, message: 'Please input your id!' }]}
-            >
-              <Input
-                readOnly={true}
-                suffix={
-                  <Typography.Paragraph
-                    copyable={{ text: '474e2cd2-fc79-49b8-98fe-dab443facede' }}
-                    style={{ margin: 0 }}
-                  ></Typography.Paragraph>
-                }
-              />
-            </Form.Item>
-          </Col>
           <Col sm={24} lg={8}>
             <Form.Item<FieldType>
               label="First name"
@@ -117,49 +99,7 @@ export const UserProfileDetailsPage = () => {
               <Input />
             </Form.Item>
           </Col>
-          <Col sm={24} lg={12}>
-            <Form.Item<FieldType>
-              label="Company"
-              name="company"
-              rules={[
-                { required: true, message: 'Please input your company!' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col sm={24} lg={12}>
-            <Form.Item<FieldType>
-              label="Subscription"
-              name="subscription"
-              rules={[
-                { required: true, message: 'Please select your subscription!' },
-              ]}
-            >
-              <Select
-                options={[
-                  { value: 'free', label: 'Free' },
-                  { value: 'pro', label: 'Pro' },
-                  { value: 'enterprise', label: 'Enterprise' },
-                  { value: 'custom', label: 'Custom', disabled: true },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item<FieldType>
-              label="Status"
-              name="status"
-              rules={[
-                { required: true, message: 'Please select your status!' },
-              ]}
-            >
-              <Radio.Group>
-                <Radio value="active">Active</Radio>
-                <Radio value="inactive">Inactive</Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
+          
         </Row>
 
         <Form.Item>

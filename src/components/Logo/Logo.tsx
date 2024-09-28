@@ -31,75 +31,19 @@ export const Logo = ({
     <Link to={href || '#'} className="logo-link">
       <Flex gap={others.gap || 'small'} align="center" {...others}>
         <img
-          src="/Testify-logo-black.png"
+          src="/logo-no-background.png"
           alt="design sparx logo"
           height={imgSize?.h || 48}
         />
-        <Flex gap="none" justify='space-around' align='flex-start' vertical>
-          <Typography.Title
-            level={5}
-            type="secondary"
-            style={{
-              color,
-              margin: 0,
-              fontSize: '14px',
-              padding: `0px`,
-              backgroundColor: bgColor,
-              borderRadius,
-            }}
-          >
-            Testify
-          </Typography.Title>
-
-          <Typography.Text
-            style={{
-              color: '#000',
-              fontSize: '12px',
-              padding: `0px`,
-              backgroundColor: bgColor,
-              borderRadius,
-            }}
-          >
-            Knowledge Unleashed
-          </Typography.Text>
-        </Flex>
       </Flex>
     </Link>
   ) : (
     <Flex gap={others.gap || 'small'} align="center" {...others}>
       <img
-        src="/Testify-logo-black.png"
+        src="/logo-no-background.png"
         alt="design sparx logo"
         height={imgSize?.h || 48}
       />
-      <Flex gap="none" justify='space-around' align='flex-start' vertical>
-          <Typography.Title
-            level={5}
-            type="secondary"
-            style={{
-              color,
-              margin: 0,
-              fontSize: '14px',
-              padding: `0px`,
-              backgroundColor: bgColor,
-              borderRadius,
-            }}
-          >
-            Testify
-          </Typography.Title>
-
-          <Typography.Text
-            style={{
-              color,
-              fontSize: '12px',
-              padding: `0px`,
-              backgroundColor: bgColor,
-              borderRadius,
-            }}
-          >
-            Knowledge Unleashed
-          </Typography.Text>
-        </Flex>
     </Flex>
   );
 };

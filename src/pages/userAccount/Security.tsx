@@ -48,65 +48,6 @@ export const UserProfileSecurityPage = () => {
   return (
     <Row {...stylesContext?.rowProps}>
       <Col span={24}>
-        <Row {...stylesContext?.rowProps}>
-          <Col xs={24} sm={12}>
-            <Card
-              title="Additional security"
-              extra={<Button type="default">Learn more</Button>}
-              actions={[<Button>Turn on</Button>]}
-              style={{ height: '100%' }}
-            >
-              <Flex flexDirection="column">
-                <Text>Passwordless account</Text>
-                <Badge status="error" text="OFF" />
-              </Flex>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Card
-              title="Additional security"
-              extra={<Button type="default">Learn more</Button>}
-              actions={[<Button>Turn off</Button>]}
-              style={{ height: '100%' }}
-            >
-              <Flex flexDirection="column">
-                <Text>Two-step verification</Text>
-                <Badge status="success" text="ON" />
-              </Flex>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Card
-              title="Sign me out"
-              actions={[<Button>Sign me out</Button>]}
-              style={{ height: '100%' }}
-            >
-              <Flex flexDirection="column">
-                <Text>
-                  We can protect you by signing you out of browsers, apps and
-                  anywhere else your account is used to sign in.
-                </Text>
-              </Flex>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Card
-              title="Recovery code"
-              actions={[<Button>Generate a new code</Button>]}
-              style={{ height: '100%' }}
-            >
-              <Flex flexDirection="column">
-                <Text>
-                  You can use this code to access your account if you lose
-                  access to your sign-in info. Print this out and keep it in a
-                  safe place or take a picture of it.
-                </Text>
-              </Flex>
-            </Card>
-          </Col>
-        </Row>
-      </Col>
-      <Col span={24}>
         <Card title="Change your password">
           <Form
             name="form-change-password"

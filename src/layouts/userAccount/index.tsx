@@ -44,26 +44,9 @@ const DESCRIPTION_ITEMS: DescriptionsProps['items'] = [
   {
     key: 'telephone',
     label: 'Phone',
-    children: <Link href="tel:+254706094433">+254 706 094 4433</Link>,
+    children: <Link href="tel:+254706094433">+94 70 094 4433</Link>,
   },
-  {
-    key: 'github',
-    label: 'Github',
-    children: (
-      <Link href="https://github.com/kelvink96" target="_blank">
-        kelvink96
-      </Link>
-    ),
-  },
-  {
-    key: 'twitter',
-    label: 'Twitter',
-    children: (
-      <Link href="https://twitter.com/kelvink_96" target="_blank">
-        @kelvink_96
-      </Link>
-    ),
-  },
+  
 ];
 
 const TAB_ITEMS: TabsProps['items'] = USER_PROFILE_ITEMS.map((u) => ({

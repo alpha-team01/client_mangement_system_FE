@@ -105,11 +105,10 @@ export const SignInPage = React.memo(() => {
         >
           <Logo color="white" />
           <Title level={2} className="text-white">
-            Welcome back to Testify
+            Welcome back to Client Management System
           </Title>
           <Text className="text-white" style={{ fontSize: 18 }}>
-            Log in to start your journey with our secure and seamless online
-            exams.
+            Log in to start your journey with our secure and seamless client management platform.
           </Text>
         </Flex>
       </Col>
@@ -131,11 +130,6 @@ export const SignInPage = React.memo(() => {
             layout="vertical"
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
-            initialValues={{
-              email: "demo@email.com",
-              password: "demo123",
-              remember: true,
-            }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"

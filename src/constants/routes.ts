@@ -72,15 +72,8 @@ export const PATH_LAYOUT = {
 
 
 export const PATH_USER_PROFILE = {
-  root: ROOTS_PROFILE,
   details: path(ROOTS_PROFILE, '/details'),
-  preferences: path(ROOTS_PROFILE, '/preferences'),
-  personalInformation: path(ROOTS_PROFILE, '/personal-information'),
   security: path(ROOTS_PROFILE, '/security'),
-  activity: path(ROOTS_PROFILE, '/activity'),
-  action: path(ROOTS_PROFILE, '/actions'),
-  help: path(ROOTS_PROFILE, '/help'),
-  feedback: path(ROOTS_PROFILE, '/feedback'),
 };
 
 export const PATH_SOCIAL = {

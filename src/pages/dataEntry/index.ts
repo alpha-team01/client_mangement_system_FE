@@ -4,7 +4,7 @@ export {CustomerStatus};
 import { CustomerRegistration } from './CustomerRegistration';
 export {CustomerRegistration};
 
-import { CustomerSearch } from './customer-status-components/CustomerSerach';
+import { CustomerSearch } from './CustomerSerach';
 export {CustomerSearch};
 
 import { Registered } from './customer-status-components/Registered';
@@ -15,3 +15,6 @@ export {VisaInformation};
 
 import { WorkPermitDetails } from './customer-status-components/WorkPermitDetails';
 export {WorkPermitDetails};
+
+import { DataEntryDashboardPage } from './DataEntryDashboardPage';
+export {DataEntryDashboardPage};

@@ -1,5 +1,4 @@
-import { Button, CardProps } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import { CardProps } from 'antd';
 import { Area } from '@ant-design/charts';
 import { Card } from '../../../index.ts';
 
@@ -65,12 +64,7 @@ type Props = CardProps;
 export const VisitorsChartCard = ({ ...others }: Props) => {
   return (
     <Card
-      title="Website visitor traffic and analytics"
-      extra={
-        <Button>
-          More details <RightOutlined />
-        </Button>
-      }
+      title="Customers Over last 10 days"
       {...others}
     >
       <AreaChart />

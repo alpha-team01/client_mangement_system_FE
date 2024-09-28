@@ -9,6 +9,7 @@ import {
   message,
   theme,
   Tooltip,
+  Typography,
 } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactNode, useEffect, useRef, useState } from 'react';
@@ -32,7 +33,7 @@ import SideNav from './SideNav.tsx';
 import HeaderNav from './HeaderNav.tsx';
 import FooterNav from './FooterNav.tsx';
 import { NProgress } from '../../components';
-import { PATH_LANDING } from '../../constants';
+import { PATH_ACCOUNT, PATH_LANDING, PATH_USER_PROFILE } from '../../constants';
 import { doSignOut } from '../../firebase/auth.ts';
 
 const { Content } = Layout;
@@ -54,21 +55,18 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const nodeRef = useRef(null);
   const floatBtnRef = useRef(null);
 
+  const user = {
+    displayName: 'John Doe',
+  };
+
   const items: MenuProps['items'] = [
     {
       key: 'user-profile-link',
       label: 'profile',
       icon: <UserOutlined />,
-    },
-    {
-      key: 'user-settings-link',
-      label: 'settings',
-      icon: <SettingOutlined />,
-    },
-    {
-      key: 'user-help-link',
-      label: 'help center',
-      icon: <QuestionOutlined />,
+      onClick: () => {
+        navigate(PATH_USER_PROFILE.details);
+      },
     },
     {
       type: 'divider',
@@ -172,12 +170,11 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               </Tooltip>
             </Flex>
             <Flex align="center" gap="small">
-              <Tooltip title="Apps">
-                <Button icon={<AppstoreOutlined />} type="text" size="large" />
-              </Tooltip>
-              <Tooltip title="Messages">
-                <Button icon={<MessageOutlined />} type="text" size="large" />
-              </Tooltip>
+              
+              <Typography.Text>
+                Welcome {user?.displayName}
+              </Typography.Text>
+
               <Dropdown menu={{ items }} trigger={['click']}>
                 <Flex>
                   <img

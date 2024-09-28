@@ -5,12 +5,15 @@ import {
   LoginOutlined,
   PieChartOutlined,
   ProductOutlined,
+  SearchOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Logo } from "../../components";
 import { Link, useLocation } from "react-router-dom";
 import { PATH_DASHBOARD, PATH_DOCS, PATH_ERROR } from "../../constants";
 import { COLOR } from "../../App.tsx";
 import { PATH_HOME } from "../../constants/routes.ts";
+import { DashboardLayout } from '../dashboards/index';
 
 const { Sider } = Layout;
 
@@ -76,10 +79,14 @@ const superAdminItems: MenuProps["items"] = [
 
 const dataEntryItems: MenuProps["items"] = [
   getItem(
-    <Link to="/data-entry/register-customer">Customer Registration</Link>,
-    "data-entry/information",
+    <Link to="/data-entry/">Dashboard</Link>,
+    "data-entry/", <PieChartOutlined />,
   ),
-  getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "data-entry"),
+  getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "data-entry", <SearchOutlined />),
+  getItem(
+    <Link to="/data-entry/register-customer">Customer Registration</Link>,
+    "data-entry/information", <UsergroupAddOutlined />,
+  ),
 ];
 
 const rootSubmenuKeys = ["dashboards", "corporate", "user-profile"];
@@ -100,6 +107,8 @@ const SideNav = ({ ...others }: SideNavProps) => {
     } else if (pathname.includes("/super-admin")) {
       setItems(superAdminItems);
     } else if (pathname.includes("/data-entry")) {
+      setItems(dataEntryItems);
+    } else {
       setItems(dataEntryItems);
     }
 

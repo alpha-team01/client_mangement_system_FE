@@ -1,10 +1,10 @@
 import { HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
-import { PageHeader } from "../../../components";
+import { PageHeader } from "../../components";
 import { Button, Card, Col, Form, Input, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Customer } from "../../../types";
+import { Customer } from "../../types";
 
 
 
@@ -30,13 +30,37 @@ export const CustomerSearch = () => {
     {
       key: "1",
       passportNo: "123456789",
-      status: "Pending",
+      status: {
+        title: "Registered",
+        description: "Pending",
+      },
       actions: "View",
     },
     {
       key: "2",
       passportNo: "987654321",
-      status: "Finished",
+      status: {
+        title: "Offer Information",
+        description: "Pending",
+      },
+      actions: "View",
+    },
+    {
+      key: "3",
+      passportNo: "456789123",
+      status:{
+        title: "Work Permit Details",
+        description: "Pending",
+      },
+      actions: "View",
+    },
+    {
+      key: "4",
+      passportNo: "789123456",
+      status: {
+        title: "Visa Information",
+        description: "Pending",
+      },
       actions: "View",
     },
     
@@ -51,8 +75,16 @@ export const CustomerSearch = () => {
     },
     {
       title: "Current Status",
-      dataIndex: "status",
       key: "status",
+      render: (text: any, record: Customer) => (
+        <>
+          <div>
+            <strong>{record.status.title}</strong>
+            <br />
+            <span>{record.status.description}</span>
+          </div>
+        </>
+      ),
     },
     {
       title: "Actions",
@@ -72,7 +104,7 @@ export const CustomerSearch = () => {
     const filtered = tableData.filter(
       (item) =>
         item.passportNo.includes(searchTerm) ||
-        item.status.toLowerCase().includes(searchTerm.toLowerCase())
+        item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
   }, [searchTerm]);

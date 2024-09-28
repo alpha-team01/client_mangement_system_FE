@@ -49,7 +49,7 @@ export const StatsCard = ({
           {title}
         </Typography.Text>
         <Row>
-          <Col span={14}>
+          <Col span={18}>
             <Typography.Title level={2}>
               {typeof value === 'number' ? (
                 <>
@@ -61,7 +61,7 @@ export const StatsCard = ({
               )}
             </Typography.Title>
           </Col>
-          <Col span={10}>
+          <Col span={6}>
             <ColumnChart data={data} />
           </Col>
         </Row>

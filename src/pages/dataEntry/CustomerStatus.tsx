@@ -8,6 +8,7 @@ import { Customer } from "../../types";
 import { Registered } from "./customer-status-components/Registered";
 import { VisaInformation } from "./customer-status-components/VisaInformation";
 import ButtonGroup from "antd/es/button/button-group";
+import { toLower } from "lodash";
 
 export const CustomerStatus = () => {
   const location = useLocation();
@@ -20,45 +21,35 @@ export const CustomerStatus = () => {
   const [editBtnText, setEditBtnText] = useState<"Edit" | "Save">("Edit");
   const [isFormEditable, setIsFormEditable] = useState(false);
 
-
+  const items = [
+    { title: "Registered", description: "Pending" },
+    { title: "Offer Information", description: "Pending" },
+    { title: "Work Permit Details", description: "Pending" },
+    { title: "Visa Information", description: "Pending" },
+  ];
 
   useEffect(() => {
     const { customer } = location.state as { customer: Customer };
     console.log("location", customer);
 
-    if (customer.status === "Finiehed") {
+    const customerStatus = toLower(customer.status.title);
+    
+    if (customerStatus === "registered") {
       setCurrent(0);
-    } else if (customer.status === "Pending") {
+    } else if (customerStatus === "offer information") {
       setCurrent(1);
-    } else if (customer.status === "work-permit-details") {
+    } else if (customerStatus === "work permit details") {
       setCurrent(2);
-    } else if (customer.status === "visa-information") {
+    } else if (customerStatus === "visa information") {
       setCurrent(3);
     }
+
   }, [location]);
 
   const onStepChange = (newCurrent: number) => {
     setCurrent(newCurrent);
   };
 
-  const items = [
-    {
-      title: "Finished",
-      description: "Registered",
-    },
-    {
-      title: "Pending",
-      description: "Offer Information",
-    },
-    {
-      title: "Pending",
-      description: "Work Permit Details",
-    },
-    {
-      title: "Pending",
-      description: "Visa Information",
-    },
-  ];
 
   useEffect(() => {
     // Disable "Previous" button if on the first step

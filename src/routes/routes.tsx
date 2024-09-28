@@ -17,13 +17,7 @@ import {
   SignInPage,
   SignUpPage,
   SocialDashboardPage,
-  UserProfileActionsPage,
-  UserProfileActivityPage,
   UserProfileDetailsPage,
-  UserProfileFeedbackPage,
-  UserProfileHelpPage,
-  UserProfileInformationPage,
-  UserProfilePreferencesPage,
   UserProfileSecurityPage,
   VerifyEmailPage,
   WelcomePage,
@@ -32,6 +26,7 @@ import {
   CustomerRegistration,
   CustomerSearch,
   CustomerStatus,
+  DataEntryDashboardPage,
 } from "../pages";
 import { OrgAdminPage } from "../pages/dashboards/OrgAdmin.tsx";
 import { DashboardLayout, GuestLayout, UserAccountLayout } from "../layouts";
@@ -150,34 +145,11 @@ const router = createBrowserRouter([
         path: "details",
         element: <UserProfileDetailsPage />,
       },
-      {
-        path: "preferences",
-        element: <UserProfilePreferencesPage />,
-      },
-      {
-        path: "information",
-        element: <UserProfileInformationPage />,
-      },
+
       {
         path: "security",
         element: <UserProfileSecurityPage />,
-      },
-      {
-        path: "activity",
-        element: <UserProfileActivityPage />,
-      },
-      {
-        path: "actions",
-        element: <UserProfileActionsPage />,
-      },
-      {
-        path: "help",
-        element: <UserProfileHelpPage />,
-      },
-      {
-        path: "feedback",
-        element: <UserProfileFeedbackPage />,
-      },
+      }
     ],
   },
   {
@@ -282,6 +254,11 @@ const router = createBrowserRouter([
     element: <PageWrapper children={<DashboardLayout />} />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        index: true,
+        path: "",
+        element: < DataEntryDashboardPage />,
+      },
       {
         index: true,
         path: "customer-status",
