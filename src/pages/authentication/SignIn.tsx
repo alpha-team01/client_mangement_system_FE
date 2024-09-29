@@ -25,6 +25,7 @@ import { doGoogleSignIn, doSignInWithEmailAndPassword } from "../../firebase/aut
 import { useAuth } from "../../context/authContext/authContext";
 import React from "react";
 import { PATH_ADMIN } from "../../constants/routes";
+import { postSignIn } from "../../api/services/Auth";
 
 const { Title, Text, Link } = Typography;
 
@@ -46,30 +47,23 @@ export const SignInPage = React.memo(() => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  useEffect(() => {
-    if (userLoggedIn) {
-      navigate(PATH_ADMIN.index);
-    }
-  }, [userLoggedIn, navigate]);
 
-  const onFinish = useCallback(async (values: any) => {
+
+  const onFinish = async (values: any) => {
     console.log("Success:", values);
     setLoading(true);
 
     try {
-      await doSignInWithEmailAndPassword(values);
-      if (auth?.userLoggedIn) {
-        navigate(PATH_ADMIN.index);
-      } else {
-        throw new Error("Login failed");
-      }
+      const  res  =  await postSignIn(values);
+      console.log(res);
     } catch (error) {
       console.error("Failed to sign in", error);
       message.error("Login failed");
     } finally {
       setLoading(false);
     }
-  }, [auth, navigate]);
+        
+  }
 
   const onFinishFailed = useCallback((errorInfo: any) => {
     console.log("Failed:", errorInfo);
