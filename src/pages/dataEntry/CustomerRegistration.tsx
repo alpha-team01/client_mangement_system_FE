@@ -1,6 +1,7 @@
 import {
     Button,
     Col,
+    DatePicker,
     Form,
     Input,
     Row,
@@ -14,6 +15,9 @@ import {
   import { UploadOutlined } from "@ant-design/icons";
   import type { UploadProps } from "antd";
   import { message, Upload } from "antd";
+import { registerUser } from "../../api/services/DataEntry";
+import axios from "axios";
+import { useState } from "react";
   
   const SOCIALS = [
     "Facebook",
@@ -31,19 +35,59 @@ import {
   ];
   
   type FieldType = {
-    country?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    city?: string;
-    postalCode?: string;
-    preferred?: boolean;
+    passNum?: string;
+    prIssueDate?: string;
+    passUrl?: string;
+    prUrl?: string;
+    CVurl?: string;
+    BcUrl?:string;
+    photoUrl?: boolean;
   };
   
   
   export const CustomerRegistration = () => {
+
+    const [passNum,setpassNum] = useState("");
+    const [prIssueDate,setprIssueDate] = useState("");
+    const [passUrl,setpassUrl] = useState("");
+    const [prUrl,setprUrl] = useState("");
+    const [CVUrl,setCVUrl] = useState("");
+    const [BCUrl,setBCUrl] = useState("");
+    const [photoUrl,setphotoUrl] = useState("");
+    const [roleId,setroleId] = useState(0);
+    const [stateID,setstateID] = useState(0);
+
     const context = useStylesContext();
-    const onFinish = (values: any) => {
+    const onFinish = async (values: any) => {
       console.log("Success:", values);
+
+      try {
+        const apiUrl = "https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/user/login";
+        axios.post(apiUrl, {
+          // headers: {
+          //   'Content-Type': "application/json"
+          // }
+            passportNumber: passNum,
+            policeReportIssueDate: prUrl,
+            passportDocUrl: passUrl,
+            policeReportDocUrl: prUrl,
+            cvUrl: CVUrl,
+            birthCertificateDoUrl: BCUrl,
+            photoUrl: photoUrl,
+            roleId: roleId,
+            stateId: stateID
+        }).then((res) => {
+          console.log(res);
+        })
+  
+        // const res = await registerUser(values);
+        // console.log(res);
+      } catch (error) {
+        console.error("Failed to register", error);
+        message.error("registration failed");
+      } finally {
+        // setLoading(false);
+      }
     };
   
     const onFinishFailed = (errorInfo: any) => {
@@ -82,7 +126,7 @@ import {
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Passport No"
-                    name="country"
+                    name="passNum"
                     rules={[
                       {
                         required: true,
@@ -90,26 +134,27 @@ import {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input onChange={(e) => setpassNum(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Passport"
-                    name="city"
+                    name="passUrl"
                     rules={[
                       { required: true, message: "Please enter your city!" },
                     ]}
                   >
-                    <Upload {...props}>
+                    {/* <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    </Upload> */}
+                    <Input onChange={(e) => setpassUrl(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Police Report Issue Date"
-                    name="addressLine1"
+                    name="prIssueDate"
                     rules={[
                       {
                         required: true,
@@ -117,13 +162,14 @@ import {
                       },
                     ]}
                   >
-                    <Input />
+                    {/* <DatePicker onChange={(e) => setprIssueDate(e.target.value)} /> */}
+                    <Input onChange={(e) => setprIssueDate(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Police Report"
-                    name="addressLine2"
+                    name="prUrl"
                     rules={[
                       {
                         required: false,
@@ -131,15 +177,16 @@ import {
                       },
                     ]}
                   >
-                    <Upload {...props}>
+                    {/* <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    </Upload> */}
+                    <Input onChange={(e) => setprUrl(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="CV"
-                    name="postalCode"
+                    name="CVurl"
                     rules={[
                       {
                         required: true,
@@ -147,15 +194,16 @@ import {
                       },
                     ]}
                   >
-                    <Upload {...props}>
+                    {/* <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    </Upload> */}
+                    <Input onChange={(e) => setCVUrl(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Birth Certificate"
-                    name="postalCode"
+                    name="BcUrl"
                     rules={[
                       {
                         required: true,
@@ -163,15 +211,16 @@ import {
                       },
                     ]}
                   >
-                    <Upload {...props}>
+                    {/* <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    </Upload> */}
+                    <Input onChange={(e) => setBCUrl(e.target.value)} />
                   </Form.Item>
                 </Col>
                 <Col sm={10} lg={12}>
                   <Form.Item<FieldType>
                     label="Photo"
-                    name="postalCode"
+                    name="photoUrl"
                     rules={[
                       {
                         required: true,
@@ -179,9 +228,10 @@ import {
                       },
                     ]}
                   >
-                    <Upload {...props}>
+                    <Input onChange={(e) => setphotoUrl(e.target.value)} />
+                    {/* <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    </Upload> */}
                   </Form.Item>
                 </Col>
               </Row>

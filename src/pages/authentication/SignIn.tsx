@@ -26,6 +26,7 @@ import { useAuth } from "../../context/authContext/authContext";
 import React from "react";
 import { PATH_ADMIN } from "../../constants/routes";
 import { postSignIn } from "../../api/services/Auth";
+import axios from "axios";
 
 const { Title, Text, Link } = Typography;
 
@@ -54,7 +55,16 @@ export const SignInPage = React.memo(() => {
     setLoading(true);
 
     try {
-      const  res  =  await postSignIn(values);
+      // const apiUrl = "https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/user/login";
+      // axios.post(apiUrl, values, {
+      //   headers: {
+      //     'Content-Type': "application/json"
+      //   }
+      // }).then((res) => {
+      //   console.log(res);
+      // })
+
+      const res = await postSignIn(values);
       console.log(res);
     } catch (error) {
       console.error("Failed to sign in", error);

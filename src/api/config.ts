@@ -14,13 +14,7 @@ const api: AxiosInstance = axios.create({
 // Interceptor to add token to headers of every request
 api.interceptors.request.use(
     config => {
-        // const token = getAuthToken();
-        // if (token) {
-        //     config.headers['Authorization'] = `Bearer ${token}`;
-        // }
-
-        config.headers['Access-Control-Allow-Origin'] = '*';
-        config.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
+        config.headers['Content-Type'] = "application/json"
 
         return config;
     },

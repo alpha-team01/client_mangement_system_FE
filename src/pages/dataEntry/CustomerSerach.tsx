@@ -5,6 +5,7 @@ import { Button, Card, Col, Form, Input, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../types";
+import axios from "axios";
 
 
 
@@ -14,6 +15,7 @@ export const CustomerSearch = () => {
 
   // State for filtered table data
   const [filteredData, setFilteredData] = useState<Customer[]>([]);
+  const [tableData, settableData] = useState<Customer[]>([]);
 
   const navigate  = useNavigate();
 
@@ -24,47 +26,54 @@ export const CustomerSearch = () => {
 
   };
 
-
+  useEffect(()=>{
+    const data = axios.get('https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/customer/getAllCustomers')
+    .then(res=>{
+      console.log(res.data.reponseObject[0].customerId)
+      settableData(res.data.reponseObject)
+      console.log(tableData[0].customerId)
+    })
+  })
   // Initial table data
-  const tableData: Customer[] = [
-    {
-      key: "1",
-      passportNo: "123456789",
-      status: {
-        title: "Registered",
-        description: "Pending",
-      },
-      actions: "View",
-    },
-    {
-      key: "2",
-      passportNo: "987654321",
-      status: {
-        title: "Offer Information",
-        description: "Pending",
-      },
-      actions: "View",
-    },
-    {
-      key: "3",
-      passportNo: "456789123",
-      status:{
-        title: "Work Permit Details",
-        description: "Pending",
-      },
-      actions: "View",
-    },
-    {
-      key: "4",
-      passportNo: "789123456",
-      status: {
-        title: "Visa Information",
-        description: "Pending",
-      },
-      actions: "View",
-    },
+  // const tableData: Customer[] = [
+  //   {
+  //     key: "1",
+  //     passportNo: "123456789",
+  //     status: {
+  //       title: "Registered",
+  //       description: "Pending",
+  //     },
+  //     actions: "View",
+  //   },
+  //   {
+  //     key: "2",
+  //     passportNo: "987654321",
+  //     status: {
+  //       title: "Offer Information",
+  //       description: "Pending",
+  //     },
+  //     actions: "View",
+  //   },
+  //   {
+  //     key: "3",
+  //     passportNo: "456789123",
+  //     status:{
+  //       title: "Work Permit Details",
+  //       description: "Pending",
+  //     },
+  //     actions: "View",
+  //   },
+  //   {
+  //     key: "4",
+  //     passportNo: "789123456",
+  //     status: {
+  //       title: "Visa Information",
+  //       description: "Pending",
+  //     },
+  //     actions: "View",
+  //   },
     
-  ];
+  // ];
 
   // Define columns for the table
   const columns = [
@@ -103,7 +112,7 @@ export const CustomerSearch = () => {
   useEffect(() => {
     const filtered = tableData.filter(
       (item) =>
-        item.passportNo.includes(searchTerm) ||
+        item.passportNumber.includes(searchTerm) ||
         item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
