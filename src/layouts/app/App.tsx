@@ -33,8 +33,11 @@ import SideNav from './SideNav.tsx';
 import HeaderNav from './HeaderNav.tsx';
 import FooterNav from './FooterNav.tsx';
 import { NProgress } from '../../components';
-import { PATH_ACCOUNT, PATH_LANDING, PATH_USER_PROFILE } from '../../constants';
-import { doSignOut } from '../../firebase/auth.ts';
+import { PATH_ACCOUNT, PATH_AUTH, PATH_LANDING, PATH_USER_PROFILE } from '../../constants';
+import { doSignOut } from '../../api/services/Auth.ts';
+import { useAuth } from '../../context/AuthContext.tsx';
+
+
 
 const { Content } = Layout;
 
@@ -55,9 +58,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const nodeRef = useRef(null);
   const floatBtnRef = useRef(null);
 
-  const user = {
-    displayName: 'John Doe',
-  };
+  const { user , logout} = useAuth();
 
   const items: MenuProps['items'] = [
     {
@@ -76,19 +77,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       label: 'logout',
       icon: <LogoutOutlined />,
       danger: true,
-      onClick: () => {
-        message.open({
-          type: 'loading',
-          content: 'signing you out',
-        });
-
-        doSignOut().then(() => {
-          navigate(PATH_LANDING.root);
-        });
-
-        // setTimeout(() => {
-        // }, 1000);
-      },
+      onClick: logout
     },
   ];
 
@@ -172,7 +161,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
             <Flex align="center" gap="small">
               
               <Typography.Text>
-                Welcome {user?.displayName}
+                Welcome {user?.firstName} {user?.lastName}
               </Typography.Text>
 
               <Dropdown menu={{ items }} trigger={['click']}>

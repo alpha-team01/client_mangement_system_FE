@@ -154,30 +154,6 @@ export const PATH_USER_MGMT = {
   permissions: path(ROOTS_USER_MGMT, '/permissions'),
 };
 
-export const PATH_INVOICE = {
-  root: ROOTS_INVOICE,
-  new: path(ROOTS_INVOICE, `/new`),
-  details: (id: string | number): string =>
-    path(ROOTS_USER_MGMT, `/view/${id}`),
-};
-
-export const PATH_FILE = {
-  root: ROOTS_FILE_MGMT,
-  files: path(ROOTS_FILE_MGMT, `/files`),
-  blank: path(ROOTS_FILE_MGMT, `/blank`),
-};
-
-export const PATH_INBOX = {
-  root: ROOTS_INBOX,
-  new: path(ROOTS_INBOX, `/new`),
-  details: (id: string | number): string => path(ROOTS_INBOX, `/view/${id}`),
-  blank: path(ROOTS_INBOX, `/blank`),
-};
-
-export const PATH_CALENDAR = {
-  root: ROOTS_CALENDAR,
-};
-
 export const PATH_SUBSCRIPTION = {
   root: ROOTS_SUBSCRIPTION,
   list: path(ROOTS_SUBSCRIPTION, `/list`),
@@ -238,7 +214,7 @@ export const PATH_SUPER_ADMIN = {
 
 export const PATH_DATA_ENTRY = {
   root: ROOTS_DATA_ENTRY,
-  index: path(ROOTS_DATA_ENTRY, '/index'),
+  dashbord: path(ROOTS_DATA_ENTRY, '/dashboard'),
   users: path(ROOTS_DATA_ENTRY, '/users'),
   roles: path(ROOTS_DATA_ENTRY, '/roles'),
   permissions: path(ROOTS_DATA_ENTRY, '/permissions'),

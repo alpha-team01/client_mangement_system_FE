@@ -3,8 +3,10 @@ export type Customer = {
     key: string;
     passportNo: string;
     status: {
-      title: "Registered" | "Offer Information" | "Work Permit Details" | "Visa Information";
-      description: "Pending" | "Finished";
+      title: string;
+      description: string;
+      // title: "Registered" | "Offer Information" | "Work Permit Details" | "Visa Information";
+      // description: "Pending" | "Finished";
     };
     actions: string;
   }

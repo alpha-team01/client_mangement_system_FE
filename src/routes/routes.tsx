@@ -1,9 +1,6 @@
 import { createBrowserRouter, useLocation } from "react-router-dom";
 import {
   AccountDeactivePage,
-  BiddingDashboardPage,
-  DefaultDashboardPage,
-  EcommerceDashboardPage,
   Error400Page,
   Error403Page,
   Error404Page,
@@ -11,29 +8,32 @@ import {
   Error503Page,
   ErrorPage,
   HomePage,
-  MarketingDashboardPage,
   PasswordResetPage,
-  ProjectsDashboardPage,
   SignInPage,
   SignUpPage,
-  SocialDashboardPage,
   UserProfileDetailsPage,
   UserProfileSecurityPage,
   VerifyEmailPage,
   WelcomePage,
-  LearningDashboardPage,
-  LogisticsDashboardPage,
   CustomerRegistration,
   CustomerSearch,
   CustomerStatus,
   DataEntryDashboardPage,
 } from "../pages";
-import { OrgAdminPage } from "../pages/dashboards/OrgAdmin.tsx";
-import { DashboardLayout, GuestLayout, UserAccountLayout } from "../layouts";
+
+import {
+  CommonLayout,
+  DashboardLayout,
+  GuestLayout,
+  UserAccountLayout,
+} from "../layouts";
 import React, { ReactNode, useEffect } from "react";
 import { AboutPage } from "../pages/About.tsx";
 import { AdminPage } from "../pages/admin/AdminPage.tsx";
 import { SuperAdminPage } from "../pages/superAdmin/SuperAdminPage.tsx";
+import { AuthProvider } from "../context/AuthContext.tsx";
+import ProtectedRoute from "./ProtectedRoutes.tsx";
+import { PATH_DATA_ENTRY } from "../constants/routes.ts";
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -78,63 +78,19 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "/home",
-    element: <PageWrapper children={<GuestLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: "",
-        element: <HomePage />,
-      },
-    ],
-  },
-  {
-    path: "/dashboards",
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: "default",
-        element: <DefaultDashboardPage />,
-      },
-      {
-        index: true,
-        path: "orgadmin",
-        element: <OrgAdminPage />,
-      },
-      {
-        path: "projects",
-        element: <ProjectsDashboardPage />,
-      },
-      {
-        path: "ecommerce",
-        element: <EcommerceDashboardPage />,
-      },
-      {
-        path: "marketing",
-        element: <MarketingDashboardPage />,
-      },
-      {
-        path: "social",
-        element: <SocialDashboardPage />,
-      },
-      {
-        path: "bidding",
-        element: <BiddingDashboardPage />,
-      },
-      {
-        path: "learning",
-        element: <LearningDashboardPage />,
-      },
-      {
-        path: "logistics",
-        element: <LogisticsDashboardPage />,
-      },
-    ],
-  },
+  // {
+  //   path: "/home",
+  //   element: <PageWrapper children={<GuestLayout />} />,
+  //   errorElement: <ErrorPage />,
+  //   children: [
+  //     {
+  //       index: true,
+  //       path: "",
+  //       element: <HomePage />,
+  //     },
+  //   ],
+  // },
+
   {
     path: "/user-profile",
     element: <PageWrapper children={<UserAccountLayout />} />,
@@ -149,11 +105,16 @@ const router = createBrowserRouter([
       {
         path: "security",
         element: <UserProfileSecurityPage />,
-      }
+      },
     ],
   },
   {
     path: "/auth",
+    element: (
+      <AuthProvider>
+        <PageWrapper children={<CommonLayout />} />
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -223,7 +184,13 @@ const router = createBrowserRouter([
   // admin routes
   {
     path: "/admin",
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: (
+      <AuthProvider>
+        {/* <ProtectedRoute allowedRoles={["admin"]}> */}
+          <PageWrapper children={<DashboardLayout />} />
+        {/* </ProtectedRoute> */}
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -237,7 +204,13 @@ const router = createBrowserRouter([
   // super admin routes
   {
     path: "/super-admin",
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: (
+      <AuthProvider>
+        {/* <ProtectedRoute allowedRoles={["super admin"]}> */}
+          <PageWrapper children={<DashboardLayout />} />
+        {/* </ProtectedRoute> */}
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -251,13 +224,24 @@ const router = createBrowserRouter([
   // data entry routes
   {
     path: "/data-entry",
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: (
+      <AuthProvider>
+        {/* <ProtectedRoute allowedRoles={["data entry"]}> */}
+          <PageWrapper children={<DashboardLayout />} />
+        {/* </ProtectedRoute> */}
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: "",
-        element: < DataEntryDashboardPage />,
+        path: PATH_DATA_ENTRY.root,
+        element: <DataEntryDashboardPage />,
+      },
+      {
+        index: true,
+        path: PATH_DATA_ENTRY.dashbord,
+        element: <DataEntryDashboardPage />,
       },
       {
         index: true,

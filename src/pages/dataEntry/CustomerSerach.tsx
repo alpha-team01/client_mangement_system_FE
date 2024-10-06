@@ -5,7 +5,7 @@ import { Button, Card, Col, Form, Input, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../types";
-import axios from "axios";
+import { getAllCustomers } from "../../api/services/Common";
 
 
 
@@ -16,6 +16,7 @@ export const CustomerSearch = () => {
   // State for filtered table data
   const [filteredData, setFilteredData] = useState<Customer[]>([]);
   const [tableData, settableData] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const navigate  = useNavigate();
 
@@ -26,54 +27,30 @@ export const CustomerSearch = () => {
 
   };
 
-  useEffect(()=>{
-    const data = axios.get('https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/customer/getAllCustomers')
-    .then(res=>{
-      console.log(res.data.reponseObject[0].customerId)
-      settableData(res.data.reponseObject)
-      console.log(tableData[0].customerId)
-    })
-  })
-  // Initial table data
-  // const tableData: Customer[] = [
-  //   {
-  //     key: "1",
-  //     passportNo: "123456789",
-  //     status: {
-  //       title: "Registered",
-  //       description: "Pending",
-  //     },
-  //     actions: "View",
-  //   },
-  //   {
-  //     key: "2",
-  //     passportNo: "987654321",
-  //     status: {
-  //       title: "Offer Information",
-  //       description: "Pending",
-  //     },
-  //     actions: "View",
-  //   },
-  //   {
-  //     key: "3",
-  //     passportNo: "456789123",
-  //     status:{
-  //       title: "Work Permit Details",
-  //       description: "Pending",
-  //     },
-  //     actions: "View",
-  //   },
-  //   {
-  //     key: "4",
-  //     passportNo: "789123456",
-  //     status: {
-  //       title: "Visa Information",
-  //       description: "Pending",
-  //     },
-  //     actions: "View",
-  //   },
-    
-  // ];
+  useEffect(() => {
+    setLoading(true);
+    getAllCustomers().then((res) => {
+      //  res.data.responseObject convert a json object to array
+      const results = res.data.reponseObject;
+
+      // Extract and map only the required fields from the response
+      const data = results.map((item :any) => {
+        return {
+          key: item.customerId, // Unique key for Ant Design Table
+          passportNo: item.passportNumber, // Required field
+          status: {
+            title: item.step || "N/A", // Use "N/A" if step is null
+            description: item.step || "N/A", // Same for description
+          },
+          actions: "View", // Static value for actions
+        };
+      });
+  
+      settableData(data); // Set the state with the new data
+      setFilteredData(data); // Step 2: Also set filteredData initially
+      setLoading(false); // Step 2: Set loading to false after data is fetched
+    });
+  }, []);
 
   // Define columns for the table
   const columns = [
@@ -85,7 +62,7 @@ export const CustomerSearch = () => {
     {
       title: "Current Status",
       key: "status",
-      render: (text: any, record: Customer) => (
+      render: (record: Customer) => (
         <>
           <div>
             <strong>{record.status.title}</strong>
@@ -98,7 +75,7 @@ export const CustomerSearch = () => {
     {
       title: "Actions",
       dataIndex: "actions",
-      render: (text: any, record: Customer) => (
+      render: (record: Customer) => (
         <>
           <Button onClick={() => handleClickView(record)} type="primary">View</Button>
         </>
@@ -111,12 +88,14 @@ export const CustomerSearch = () => {
   // Update filtered data based on search term
   useEffect(() => {
     const filtered = tableData.filter(
-      (item) =>
-        item.passportNumber.includes(searchTerm) ||
-        item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
+        (item) =>
+            item.passportNo.includes(searchTerm) ||  // Change here to use passportNo
+            item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
-  }, [searchTerm]);
+}, [searchTerm, tableData]); 
+
+  console.log("filteredData", filteredData);
 
   // Handle input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,7 +144,7 @@ export const CustomerSearch = () => {
 
       <Col span={24}>
         <Card style={{ backgroundColor: "#fff" }}>
-          <Table<Customer> columns={columns} dataSource={filteredData} pagination={{ pageSize: 5 }}/>
+          <Table<Customer> columns={columns} dataSource={filteredData} pagination={{ pageSize: 5 }} loading={loading} />
         </Card>
       </Col>
     </div>

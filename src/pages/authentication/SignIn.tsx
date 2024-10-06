@@ -19,14 +19,10 @@ import {
 import { Logo } from "../../components";
 import { useMediaQuery } from "react-responsive";
 import { PATH_AUTH } from "../../constants/routes";
-import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import { doGoogleSignIn, doSignInWithEmailAndPassword } from "../../firebase/auth";
-import { useAuth } from "../../context/authContext/authContext";
+import { useCallback, useState } from "react";
 import React from "react";
-import { PATH_ADMIN } from "../../constants/routes";
 import { postSignIn } from "../../api/services/Auth";
-import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const { Title, Text, Link } = Typography;
 
@@ -37,41 +33,43 @@ type FieldType = {
 };
 
 export const SignInPage = React.memo(() => {
-  const auth = useAuth();
-  const userLoggedIn = auth?.userLoggedIn;
-
   const {
     token: { colorPrimary },
   } = theme.useToken();
+
   const isMobile = useMediaQuery({ maxWidth: 769 });
-  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
 
+  const {login} = useAuth();
 
   const onFinish = async (values: any) => {
     console.log("Success:", values);
+
     setLoading(true);
 
-    try {
-      // const apiUrl = "https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/user/login";
-      // axios.post(apiUrl, values, {
-      //   headers: {
-      //     'Content-Type': "application/json"
-      //   }
-      // }).then((res) => {
-      //   console.log(res);
-      // })
-
-      const res = await postSignIn(values);
-      console.log(res);
-    } catch (error) {
-      console.error("Failed to sign in", error);
-      message.error("Login failed");
-    } finally {
-      setLoading(false);
-    }
+    postSignIn(values)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('Success:', res.data);
+          login(res.data.reponseObject);
+          message.success('Login successful');
+        } else {
+          message.error('Login failed');
+        }
+      })
+      .catch((error) => {
+        console.log('Failed:', error);
+        if (error.response && error.response.status === 400) {
+          message.error('Invalid credentials. Please try again.');
+        } else {
+          message.error('An error occurred. Please try again.');
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
         
   }
 
@@ -79,23 +77,6 @@ export const SignInPage = React.memo(() => {
     console.log("Failed:", errorInfo);
   }, []);
 
-  const onFinishGoogle = useCallback( async () => {
-    setGoogleLoading(true);
-    
-    try {
-      await doGoogleSignIn();
-      if (auth?.userLoggedIn) {
-        navigate(PATH_ADMIN.index);
-      } else {
-        throw new Error("Login failed");
-      }
-    } catch (error) {
-      console.error("Failed to sign in", error);
-      message.error("Login failed");
-    } finally {
-      setGoogleLoading(false);
-    }
-  }, [auth, navigate]);
 
   return (
     <Row style={{ minHeight: isMobile ? "auto" : "100vh", overflow: "hidden" }}>
@@ -182,17 +163,6 @@ export const SignInPage = React.memo(() => {
               </Flex>
             </Form.Item>
           </Form>
-          <Divider className="m-0">or</Divider>
-          <Flex
-            vertical={isMobile}
-            gap="small"
-            wrap="wrap"
-            style={{ width: "100%" }}
-          >
-            <Button icon={<GoogleOutlined />} onClick={onFinishGoogle} loading={googleLoading}>Sign in with Google</Button>
-            <Button icon={<FacebookFilled />}>Sign in with Facebook</Button>
-            <Button icon={<TwitterOutlined />}>Sign in with Twitter</Button>
-          </Flex>
         </Flex>
       </Col>
     </Row>

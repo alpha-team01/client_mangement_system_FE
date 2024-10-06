@@ -6,7 +6,6 @@ import {
   Flex,
   Form,
   Input,
-  message,
   Row,
   theme,
   Typography,
@@ -18,10 +17,9 @@ import {
 } from '@ant-design/icons';
 import { Logo } from '../../components';
 import { useMediaQuery } from 'react-responsive';
-import { PATH_AUTH, PATH_DASHBOARD } from '../../constants';
+import { PATH_AUTH } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import {  doCreateUserWithEmailAndPassword } from '../../firebase/auth';
 
 const { Title, Text, Link } = Typography;
 
@@ -45,14 +43,6 @@ export const SignUpPage = () => {
   const onFinish = async (values: any) => {
     console.log('Success:', values);
     setLoading(true);
-
-    try {
-      await doCreateUserWithEmailAndPassword(values.email, values.password);
-      navigate(PATH_DASHBOARD.default);
-    } catch (error: any) {
-      message.error(error.message);
-      setLoading(false);
-    }
 
     // add firstnamae and lastname to the user
     

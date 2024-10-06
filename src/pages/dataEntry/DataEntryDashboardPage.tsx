@@ -7,6 +7,8 @@ import {
 import { HomeOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Helmet } from 'react-helmet-async';
 import { useStylesContext } from '../../context';
+import { json } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export const DataEntryDashboardPage = () => {
   const stylesContext = useStylesContext();
@@ -15,14 +17,15 @@ export const DataEntryDashboardPage = () => {
   //   error: campaignAdsError,
   //   loading: campaignAdsLoading,
   // } = useFetchData('../mocks/CampaignAds.json');
+  const { user } = useAuth();
 
   return (
     <div>
       <Helmet>
-        <title>Dashboard</title>
+        <title>Dashboard </title>
       </Helmet>
       <PageHeader
-        title="Dashboard"
+        title={"Dashboard"}
         breadcrumbs={[
           {
             title: (
@@ -46,6 +49,7 @@ export const DataEntryDashboardPage = () => {
       />
       <Row {...stylesContext?.rowProps}>
         <Col xs={24} sm={12} lg={12}>
+          {user?.role === 'Data Entry' && "Welcome to the Data Entry Dashboard"}
           <MarketingStatsCard
             data={[274, 337, 81, 497]}
             title="New Customers"

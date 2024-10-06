@@ -14,6 +14,7 @@ import { PATH_DASHBOARD, PATH_DOCS, PATH_ERROR } from "../../constants";
 import { COLOR } from "../../App.tsx";
 import { PATH_HOME } from "../../constants/routes.ts";
 import { DashboardLayout } from '../dashboards/index';
+import { useAuth } from "../../context/AuthContext.tsx";
 
 const { Sider } = Layout;
 
@@ -95,18 +96,21 @@ type SideNavProps = SiderProps;
 
 const SideNav = ({ ...others }: SideNavProps) => {
   const nodeRef = useRef(null);
+  const { user, logout } = useAuth();
+
   const { pathname } = useLocation();
   const [openKeys, setOpenKeys] = useState([""]);
   const [current, setCurrent] = useState("");
   const [items, setItems] = useState<MenuProps["items"]>(itemsTest);
 
+
   useEffect(() => {
-    // if url pathhass admin, then add admin menu
-    if (pathname.includes("/admin")) {
+    
+    if (user?.role.toLowerCase() === "admin") {
       setItems(adminItems);
-    } else if (pathname.includes("/super-admin")) {
+    } else if (user?.role.toLowerCase() === "super admin") {
       setItems(superAdminItems);
-    } else if (pathname.includes("/data-entry")) {
+    } else if (user?.role.toLowerCase() === "data entry") {
       setItems(dataEntryItems);
     } else {
       setItems(dataEntryItems);
@@ -115,7 +119,7 @@ const SideNav = ({ ...others }: SideNavProps) => {
     // add the item signout at the end of each item list
     setItems((prev) => [
       ...(prev || []),
-      getItem("Sign Out", "sign-out", <LoginOutlined />),
+      getItem(<span onClick={logout}>Sign Out</span>, "sign-out", <LoginOutlined />),
     ]);
   }, []);
 
