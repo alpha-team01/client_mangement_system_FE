@@ -11,6 +11,7 @@ import {
   Form,
 } from "antd";
 import { useStylesContext } from "../../../context";
+import { RegistrationDetails } from "../../../types";
 
 type FieldType = {
   country: string;
@@ -22,11 +23,12 @@ type FieldType = {
 };
 
 type RegisteredProps = {
+  data ?: RegistrationDetails;
   isEditable: boolean; // Prop to control editability
   onSave: () => void;
 };
 
-export const Registered = ({ isEditable, onSave }: RegisteredProps) => {
+export const Registered = ({data, isEditable, onSave }: RegisteredProps) => {
   const context = useStylesContext();
   const onFinish = (values: any) => {
     console.log("Success:", values);

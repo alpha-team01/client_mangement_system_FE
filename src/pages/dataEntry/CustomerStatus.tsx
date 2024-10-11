@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Flex, Steps } from "antd";
 import { WorkPermitDetails } from "./customer-status-components/WorkPermitDetails";
-import { useStylesContext } from "../../context";
 import { Pending } from "./customer-status-components/Pending";
 import { useLocation } from "react-router-dom";
 import { Customer } from "../../types";
@@ -9,6 +8,8 @@ import { Registered } from "./customer-status-components/Registered";
 import { VisaInformation } from "./customer-status-components/VisaInformation";
 import ButtonGroup from "antd/es/button/button-group";
 import { toLower } from "lodash";
+import { getCustomerById } from "../../api/services/Common";
+import { RegistrationDetails, StateWiseDocDetails } from '../../types/customerStatus';
 
 export const CustomerStatus = () => {
   const location = useLocation();
@@ -21,6 +22,10 @@ export const CustomerStatus = () => {
   const [editBtnText, setEditBtnText] = useState<"Edit" | "Save">("Edit");
   const [isFormEditable, setIsFormEditable] = useState(false);
 
+  const [customerData, setCustomerData] = useState<RegistrationDetails>();
+  const [offerData, setOfferData] = useState<StateWiseDocDetails>();
+  const [workPermitData, setWorkPermitData] = useState<StateWiseDocDetails>();
+
   const items = [
     { title: "Registered", description: "Pending" },
     { title: "Offer Information", description: "Pending" },
@@ -31,6 +36,21 @@ export const CustomerStatus = () => {
   useEffect(() => {
     const { customer } = location.state as { customer: Customer };
     console.log("location", customer);
+
+    // get customer details
+    getCustomerById(customer.key).then((res) => {
+      console.log("customer details", res.data.reponseObject);
+      setCustomerData(res.data.reponseObject);
+
+      setOfferData(res.data.reponseObject.stateWiseDocDetails.find((doc : StateWiseDocDetails) => doc.stateId === 2));
+
+      console.log("offerData", offerData);
+
+      setWorkPermitData(res.data.reponseObject.stateWiseDocDetails.find((doc : StateWiseDocDetails) => doc.stateId === 3));
+
+      console.log("workPermitData", workPermitData);
+
+    });
 
     const customerStatus = toLower(customer.status.title);
     
@@ -117,9 +137,9 @@ export const CustomerStatus = () => {
           onChange={onStepChange}
         />
 
-        {current === 0 && <Registered isEditable={isFormEditable} onSave={handleSaveFromChild}/>}
-        {current === 1 && <Pending />}
-        {current === 2 && <WorkPermitDetails />}
+        {current === 0 && <Registered data={customerData} isEditable={isFormEditable} onSave={handleSaveFromChild}/>}
+        {current === 1 && <Pending data={offerData}/>}
+        {current === 2 && <WorkPermitDetails data={workPermitData}/>}
         {current === 3 && <VisaInformation />}
       </Col>
 

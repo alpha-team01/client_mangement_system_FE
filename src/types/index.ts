@@ -44,6 +44,8 @@ import type { Exams } from './exams.ts';
 
 import type { Customer } from './customer.ts';
 
+import type { RegistrationDetails, StateWiseDocDetails, PaymentDetails } from './customerStatus.ts';
+
 
 export type {
   Exams,
@@ -80,4 +82,7 @@ export type {
   Session,
   ActivityTimeline,
   Customer,
+  RegistrationDetails,
+  StateWiseDocDetails,
+  PaymentDetails,
 };

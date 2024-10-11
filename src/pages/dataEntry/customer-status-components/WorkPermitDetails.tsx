@@ -10,20 +10,21 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useState } from "react";
+import { StateWiseDocDetails } from '../../../types/customerStatus';
 
-interface DataType {
+interface PaymentColumnDataType {
   key: string;
   payment: string;
   amount: number;
   date: string;
 }
 
-const data: DataType[] = [];
+const paymentData: PaymentColumnDataType[] = [];
 for (let i = 1; i <= 5; i++) {
-  data.push({ key: `${i}`, payment: "Payment " + i, amount: 100000, date: "2021-11-10" });
+  paymentData.push({ key: `${i}`, payment: "Payment " + i, amount: 100000, date: "2021-11-10" });
 }
 
-const columns: ColumnsType<DataType> = [
+const columns: ColumnsType<PaymentColumnDataType> = [
   {
     title: "Payment",
     dataIndex: "payment",
@@ -41,7 +42,7 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-export const WorkPermitDetails = () => {
+export const WorkPermitDetails = (data : StateWiseDocDetails) => {
   const [totalAmount] = useState<number>(300000);
   const [firstPayment] = useState<number>(100000);
   const [remainingAmount, setRemainingAmount] = useState<number>(200000);
@@ -51,6 +52,8 @@ export const WorkPermitDetails = () => {
 
   // Handle Upload component logic properly with fileList prop
   const [fileList, setFileList] = useState<any[]>([]);
+
+  console.log("data", data);
 
   const props: UploadProps = {
     name: "file",
@@ -77,7 +80,7 @@ export const WorkPermitDetails = () => {
     bordered,
     showHeader,
     footer: showFooter ? defaultFooter : undefined,
-    dataSource: data,
+    dataSource: paymentData,
     columns,
     pagination: false,
   };
@@ -159,7 +162,7 @@ export const WorkPermitDetails = () => {
                   {...tableProps}
                   pagination={false}
                   columns={columns}
-                  dataSource={data}
+                  dataSource={paymentData}
                   scroll={{ y: 300 }}
                 />
               </ConfigProvider>

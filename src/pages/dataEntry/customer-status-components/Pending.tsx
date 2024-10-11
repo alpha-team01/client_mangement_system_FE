@@ -14,6 +14,7 @@ import {
 import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { ColumnsType } from "antd/es/table/interface";
+import { StateWiseDocDetails } from '../../../types/customerStatus';
 
 interface DataType {
   key: string;
@@ -45,13 +46,16 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-export const Pending = () => {
+export const Pending = ({data}) => {
   const [totalAmount] = useState<number>(300000);
   const [firstPayment] = useState<number>(100000);
   const [remainingAmount, setRemainingAmount] = useState<number>(200000);
   const [bordered, setBordered] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
   const [showFooter, setShowFooter] = useState(true);
+
+  console.log("data", data);
+
 
   // Handle Upload component logic properly with fileList prop
   const [fileList, setFileList] = useState<any[]>([]);

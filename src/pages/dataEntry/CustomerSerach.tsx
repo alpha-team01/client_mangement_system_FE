@@ -1,13 +1,11 @@
 import { HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import { PageHeader } from "../../components";
-import { Button, Card, Col, Form, Input, Table } from "antd";
+import { Button, Card, Col, Form, Input, message, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../types";
 import { getAllCustomers } from "../../api/services/Common";
-
-
 
 export const CustomerSearch = () => {
   // State for search input
@@ -18,38 +16,41 @@ export const CustomerSearch = () => {
   const [tableData, settableData] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const navigate  = useNavigate();
-
+  const navigate = useNavigate();
 
   const handleClickView = (record: Customer) => {
-
     navigate(`/data-entry/customer-status`, { state: { customer: record } });
-
   };
 
   useEffect(() => {
     setLoading(true);
-    getAllCustomers().then((res) => {
-      //  res.data.responseObject convert a json object to array
-      const results = res.data.reponseObject;
+    getAllCustomers()
+      .then((res) => {
+        //  res.data.responseObject convert a json object to array
+        const results = res.data.reponseObject;
 
-      // Extract and map only the required fields from the response
-      const data = results.map((item :any) => {
-        return {
-          key: item.customerId, // Unique key for Ant Design Table
-          passportNo: item.passportNumber, // Required field
-          status: {
-            title: item.step || "N/A", // Use "N/A" if step is null
-            description: item.step || "N/A", // Same for description
-          },
-          actions: "View", // Static value for actions
-        };
+        // Extract and map only the required fields from the response
+        const data = results.map((item: any) => {
+          return {
+            key: item.customerId, // Unique key for Ant Design Table
+            passportNo: item.passportNumber, // Required field
+            status: {
+              title: item.step || "N/A", // Use "N/A" if step is null
+              description: item.step || "N/A", // Same for description
+            },
+            actions: "View", // Static value for actions
+          };
+        });
+
+        settableData(data); // Set the state with the new data
+        setFilteredData(data); // Step 2: Also set filteredData initially
+        setLoading(false); // Step 2: Set loading to false after data is fetched
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        message.error("Failed to fetch data");
       });
-  
-      settableData(data); // Set the state with the new data
-      setFilteredData(data); // Step 2: Also set filteredData initially
-      setLoading(false); // Step 2: Set loading to false after data is fetched
-    });
   }, []);
 
   // Define columns for the table
@@ -62,7 +63,7 @@ export const CustomerSearch = () => {
     {
       title: "Current Status",
       key: "status",
-      render: (record: Customer) => (
+      render: (text: any, record: Customer) => (
         <>
           <div>
             <strong>{record.status.title}</strong>
@@ -75,27 +76,25 @@ export const CustomerSearch = () => {
     {
       title: "Actions",
       dataIndex: "actions",
-      render: (record: Customer) => (
+      render: (text: any, record: Customer) => (
         <>
-          <Button onClick={() => handleClickView(record)} type="primary">View</Button>
+          <Button onClick={() => handleClickView(record)} type="primary">
+            View
+          </Button>
         </>
       ),
     },
   ];
 
-
-
   // Update filtered data based on search term
   useEffect(() => {
     const filtered = tableData.filter(
-        (item) =>
-            item.passportNo.includes(searchTerm) ||  // Change here to use passportNo
-            item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
+      (item) =>
+        item.passportNo.includes(searchTerm) || // Change here to use passportNo
+        item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
-}, [searchTerm, tableData]); 
-
-  console.log("filteredData", filteredData);
+  }, [searchTerm, tableData]);
 
   // Handle input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +143,12 @@ export const CustomerSearch = () => {
 
       <Col span={24}>
         <Card style={{ backgroundColor: "#fff" }}>
-          <Table<Customer> columns={columns} dataSource={filteredData} pagination={{ pageSize: 5 }} loading={loading} />
+          <Table<Customer>
+            columns={columns}
+            dataSource={filteredData}
+            pagination={{ pageSize: 5 }}
+            loading={loading}
+          />
         </Card>
       </Col>
     </div>
