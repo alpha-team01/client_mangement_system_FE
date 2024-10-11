@@ -14,3 +14,14 @@ export const getOrganizationRequestService = () : Promise<AxiosResponse<any>> =>
 export const verifyOrganizationService = (id : number) : Promise<AxiosResponse<any>> => {
     return api.patch<any>('/organization/verifyOrganization/'+id)
 }
+
+interface UserDetails {
+    firstName:string;
+    lastName:string;
+    email:string;
+    password:string;
+}
+
+export const userRegistration = (details:UserDetails) : Promise<AxiosResponse<any>> => {
+    return api.post<any>('/api/user/register', details);
+}

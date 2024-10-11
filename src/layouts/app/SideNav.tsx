@@ -73,8 +73,20 @@ const adminItems: MenuProps["items"] = [
 ];
 
 const superAdminItems: MenuProps["items"] = [
-  getItem("Super Admin", "super-admin", <PieChartOutlined />, [
-    getItem(<Link to="/super-admin">Super Admin</Link>, "super-admin", null),
+  getItem(<Link to="/data-entry/search-customer">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
+  getItem("Customer", "super-admin", <PieChartOutlined />, [
+    getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "search-customer", <SearchOutlined />),
+  getItem(
+    <Link to="/data-entry/register-customer">Customer Registration</Link>,
+    "data-entry/information", <UsergroupAddOutlined />,
+  ),
+  ]),
+  getItem("User", "super-admin", <PieChartOutlined />, [
+    getItem(<Link to="/super-admin/search-user">Search User</Link>, "super-admin-search-user", <SearchOutlined />),
+  getItem(
+    <Link to="/super-admin/register-user">User Registration</Link>,
+    "data-entry/information", <UsergroupAddOutlined />,
+  ),
   ]),
 ];
 
@@ -113,7 +125,7 @@ const SideNav = ({ ...others }: SideNavProps) => {
     } else if (user?.role.toLowerCase() === "data entry") {
       setItems(dataEntryItems);
     } else {
-      setItems(dataEntryItems);
+      setItems(superAdminItems);
     }
 
     // add the item signout at the end of each item list

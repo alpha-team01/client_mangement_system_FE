@@ -15,7 +15,7 @@ import {
   import { UploadOutlined } from "@ant-design/icons";
   import type { UploadProps } from "antd";
   import { message, Upload } from "antd";
-import { registerUser } from "../../api/services/DataEntry";
+import { registerCustomer } from "../../api/services/DataEntry";
 import axios from "axios";
 import { useState } from "react";
   
@@ -89,7 +89,8 @@ import { useState } from "react";
         // setLoading(false);
       }
     };
-  
+    
+    
     const onFinishFailed = (errorInfo: any) => {
       console.log("Failed:", errorInfo);
     };

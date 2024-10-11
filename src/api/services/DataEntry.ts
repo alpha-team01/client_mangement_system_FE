@@ -13,6 +13,6 @@ interface Details {
   stateId : 0;
 }
 
-export const registerUser = (details:Details) : Promise<AxiosResponse<any>> => {
+export const registerCustomer = (details:Details) : Promise<AxiosResponse<any>> => {
     return api.post<any>('/api/user/register', details);
 }

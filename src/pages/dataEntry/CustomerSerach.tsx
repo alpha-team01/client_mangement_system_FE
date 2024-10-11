@@ -22,6 +22,7 @@ export const CustomerSearch = () => {
 
 
   const handleClickView = (record: Customer) => {
+    console.log("rec ", record);
 
     navigate(`/data-entry/customer-status`, { state: { customer: record } });
 
@@ -62,7 +63,7 @@ export const CustomerSearch = () => {
     {
       title: "Current Status",
       key: "status",
-      render: (record: Customer) => (
+      render: (text:any, record: Customer) => (
         <>
           <div>
             <strong>{record.status.title}</strong>
@@ -75,7 +76,7 @@ export const CustomerSearch = () => {
     {
       title: "Actions",
       dataIndex: "actions",
-      render: (record: Customer) => (
+      render: (text:any, record: Customer) => (
         <>
           <Button onClick={() => handleClickView(record)} type="primary">View</Button>
         </>

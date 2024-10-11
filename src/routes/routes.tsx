@@ -34,6 +34,8 @@ import { SuperAdminPage } from "../pages/superAdmin/SuperAdminPage.tsx";
 import { AuthProvider } from "../context/AuthContext.tsx";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import { PATH_DATA_ENTRY } from "../constants/routes.ts";
+import { RegisterUser } from "../pages/superAdmin/RegisterUser.tsx";
+import { UserStatus } from "../pages/superAdmin/UserStatus.tsx";
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -215,8 +217,18 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        path: "",
+        path: "search-user",
         element: <SuperAdminPage />,
+      },
+      {
+        index: true,
+        path: "register-user",
+        element: <RegisterUser />,
+      },
+      {
+        index: true,
+        path: "user-status",
+        element: <UserStatus />,
       },
     ],
   },
