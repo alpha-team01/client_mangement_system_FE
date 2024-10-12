@@ -13,7 +13,7 @@ import { Card } from "../../components";
 import { SaveOutlined, UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { uploadCustomerFile, registerCustomer } from "../../api/services/Common";
+import { uploadCustomerFile, registerCustomer, getAllAdminUsers } from "../../api/services/Common";
 
 type FieldType = {
   passNum?: string;
@@ -42,11 +42,7 @@ export const CustomerRegistration = () => {
 
   // Fetch owner list once on component mount
   useEffect(() => {
-    axios
-      .get(
-        "https://cms-sys-1c02ac3c74f6.herokuapp.com/cmSys/api/user/getAdminUserList"
-      )
-      .then((res) => {
+     getAllAdminUsers().then((res) => {
         const data = res.data.responseObject;
         const options = data.map((item: any) => ({
           label: item.fullName,

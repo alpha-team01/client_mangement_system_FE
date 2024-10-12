@@ -42,7 +42,7 @@ const columns: ColumnsType<PaymentColumnDataType> = [
   },
 ];
 
-export const WorkPermitDetails = (data : StateWiseDocDetails) => {
+export const WorkPermitDetails = ({data}) => {
   const [totalAmount] = useState<number>(300000);
   const [firstPayment] = useState<number>(100000);
   const [remainingAmount, setRemainingAmount] = useState<number>(200000);

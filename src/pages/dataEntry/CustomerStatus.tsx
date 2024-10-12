@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Flex, Steps } from "antd";
+import { Button, Col, Flex, Spin, Steps } from "antd";
 import { WorkPermitDetails } from "./customer-status-components/WorkPermitDetails";
 import { Pending } from "./customer-status-components/Pending";
 import { useLocation } from "react-router-dom";
@@ -7,14 +7,19 @@ import { Customer } from "../../types";
 import { Registered } from "./customer-status-components/Registered";
 import { VisaInformation } from "./customer-status-components/VisaInformation";
 import ButtonGroup from "antd/es/button/button-group";
-import { toLower } from "lodash";
+import { set, toLower } from "lodash";
 import { getCustomerById } from "../../api/services/Common";
-import { RegistrationDetails, StateWiseDocDetails } from '../../types/customerStatus';
+import {
+  RegistrationDetails,
+  StateWiseDocDetails,
+} from "../../types/customerStatus";
+import { Loader } from "../../components";
 
 export const CustomerStatus = () => {
   const location = useLocation();
 
   const [current, setCurrent] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [previousBtnStatus, setPreviousBtnStatus] = useState(false);
   const [nextBtnStatus, setNextBtnStatus] = useState(false);
@@ -23,7 +28,7 @@ export const CustomerStatus = () => {
   const [isFormEditable, setIsFormEditable] = useState(false);
 
   const [customerData, setCustomerData] = useState<RegistrationDetails>();
-  const [offerData, setOfferData] = useState<StateWiseDocDetails>();
+  const [offerData, setOfferData] = useState<any>();
   const [workPermitData, setWorkPermitData] = useState<StateWiseDocDetails>();
 
   const items = [
@@ -34,26 +39,38 @@ export const CustomerStatus = () => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     const { customer } = location.state as { customer: Customer };
     console.log("location", customer);
 
     // get customer details
-    getCustomerById(customer.key).then((res) => {
-      console.log("customer details", res.data.reponseObject);
-      setCustomerData(res.data.reponseObject);
+    getCustomerById(customer.key)
+      .then((res) => {
+        console.log("customer details", res.data.responseObject);
+        setCustomerData(res.data.responseObject);
 
-      setOfferData(res.data.reponseObject.stateWiseDocDetails.find((doc : StateWiseDocDetails) => doc.stateId === 2));
+        setOfferData(
+          res.data.responseObject.stateWiseDocDetails.find(
+            (doc: StateWiseDocDetails) => doc.stateId === 2
+          )
+        );
 
-      console.log("offerData", offerData);
+        console.log("offerData", offerData);
 
-      setWorkPermitData(res.data.reponseObject.stateWiseDocDetails.find((doc : StateWiseDocDetails) => doc.stateId === 3));
+        setWorkPermitData(
+          res.data.responseObject.stateWiseDocDetails.find(
+            (doc: StateWiseDocDetails) => doc.stateId === 3
+          )
+        );
 
-      console.log("workPermitData", workPermitData);
-
-    });
+        console.log("workPermitData", workPermitData);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     const customerStatus = toLower(customer.status.title);
-    
+
     if (customerStatus === "registered") {
       setCurrent(0);
     } else if (customerStatus === "offer information") {
@@ -63,13 +80,11 @@ export const CustomerStatus = () => {
     } else if (customerStatus === "visa information") {
       setCurrent(3);
     }
-
   }, [location]);
 
   const onStepChange = (newCurrent: number) => {
     setCurrent(newCurrent);
   };
-
 
   useEffect(() => {
     // Disable "Previous" button if on the first step
@@ -130,26 +145,40 @@ export const CustomerStatus = () => {
   return (
     <>
       <Col span={24}>
-        <Steps
-          current={current}
-          labelPlacement="vertical"
-          items={items}
-          onChange={onStepChange}
-        />
+        <Spin spinning={loading} >
+          <Steps
+            current={current}
+            labelPlacement="vertical"
+            items={items}
+            onChange={onStepChange}
+          />
 
-        {current === 0 && <Registered data={customerData} isEditable={isFormEditable} onSave={handleSaveFromChild}/>}
-        {current === 1 && <Pending data={offerData}/>}
-        {current === 2 && <WorkPermitDetails data={workPermitData}/>}
-        {current === 3 && <VisaInformation />}
+          {current === 0 && (
+            <Registered
+              data={customerData}
+              isEditable={isFormEditable}
+              onSave={handleSaveFromChild}
+            />
+          )}
+          {current === 1 && <Pending data={offerData} />}
+          {current === 2 && <WorkPermitDetails data={workPermitData} />}
+          {current === 3 && <VisaInformation />}
+        </Spin>
       </Col>
 
       <Col span={24} style={{ marginTop: "1rem" }}>
         {/* add a button group called next pervious and edit */}
         <Flex justify="flex-end">
           <ButtonGroup>
-            <Button onClick={handlePreviousClick} disabled={previousBtnStatus}>Previous</Button>
-            {editBtnText === "Edit" && (<Button onClick={handleEditClick}>{editBtnText}</Button>) }
-            <Button onClick={handleNextClick} disabled={nextBtnStatus}>Next</Button>
+            <Button onClick={handlePreviousClick} disabled={previousBtnStatus}>
+              Previous
+            </Button>
+            {editBtnText === "Edit" && (
+              <Button onClick={handleEditClick}>{editBtnText}</Button>
+            )}
+            <Button onClick={handleNextClick} disabled={nextBtnStatus}>
+              Next
+            </Button>
           </ButtonGroup>
         </Flex>
       </Col>

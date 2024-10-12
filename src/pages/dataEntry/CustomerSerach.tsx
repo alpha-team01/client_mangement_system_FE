@@ -27,10 +27,12 @@ export const CustomerSearch = () => {
     getAllCustomers()
       .then((res) => {
         //  res.data.responseObject convert a json object to array
-        const results = res.data.reponseObject;
+        const results = res.data.responseObject;
 
         // Extract and map only the required fields from the response
+        console.log(results);
         const data = results.map((item: any) => {
+          // console.log(item);
           return {
             key: item.customerId, // Unique key for Ant Design Table
             passportNo: item.passportNumber, // Required field

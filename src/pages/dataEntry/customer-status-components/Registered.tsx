@@ -1,7 +1,5 @@
 import { UploadOutlined, SaveOutlined } from "@ant-design/icons";
 import {
-  UploadProps,
-  message,
   Row,
   Col,
   Card,
@@ -12,24 +10,28 @@ import {
 } from "antd";
 import { useStylesContext } from "../../../context";
 import { RegistrationDetails } from "../../../types";
+import { useEffect } from "react";
 
 type FieldType = {
-  country: string;
-  city: string;
-  addressLine1: string;
-  addressLine2?: string;
-  postalCode: string;
-  preferred: boolean;
+  passportNumber?: string;
+  passport?: string;
+  policeReportIssueDate?: string;
+  policeReport?: string;
+  cv?: string;
+  birthCertificate?: string;
+  photo?: string;
 };
 
 type RegisteredProps = {
-  data ?: RegistrationDetails;
+  data?: RegistrationDetails; // Pass customer data here
   isEditable: boolean; // Prop to control editability
   onSave: () => void;
 };
 
-export const Registered = ({data, isEditable, onSave }: RegisteredProps) => {
+export const Registered = ({ data, isEditable, onSave }: RegisteredProps) => {
   const context = useStylesContext();
+  const [form] = Form.useForm();
+
   const onFinish = (values: any) => {
     console.log("Success:", values);
     onSave();
@@ -38,37 +40,27 @@ export const Registered = ({data, isEditable, onSave }: RegisteredProps) => {
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
-  const props: UploadProps = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
+
+  // Update form fields when data is available/fetched
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        passportNumber: data.passportNumber,
+        policeReportIssueDate: data.policeReportIssueDate,
+        // Other fields as needed
+      });
+    }
+  }, [data, form]);
+
+
   return (
     <Row {...context?.rowProps}>
       <Col span={24}>
         <Card style={{ backgroundColor: "#fff" }}>
           <Form
+            form={form}
             name="user-profile-address-form"
             layout="vertical"
-            initialValues={{
-              country: "Kenya",
-              addressLine1: "828, 18282 ABC Drive, XYZ Rd",
-              city: "Nairobi",
-              postalCode: "00100",
-              preferred: true,
-            }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="on"
@@ -78,7 +70,7 @@ export const Registered = ({data, isEditable, onSave }: RegisteredProps) => {
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Passport No"
-                  name="country"
+                  name="passportNumber"
                   rules={[
                     {
                       required: true,
@@ -89,95 +81,119 @@ export const Registered = ({data, isEditable, onSave }: RegisteredProps) => {
                   <Input disabled={!isEditable} />
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Passport"
-                  name="city"
+                  name="passport"
                   rules={[
-                    { required: true, message: "Please enter your city!" },
+                    { required: true, message: "Please upload your passport!" },
                   ]}
                 >
-                  <Upload {...props}  disabled={!isEditable}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  {data?.passportDocUrl ? (
+                    <a href={data.passportDocUrl} target="_blank" rel="noopener noreferrer">
+                      View Passport
+                    </a>
+                  ) : (
+                    <Upload disabled={!isEditable}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Police Report Issue Date"
-                  name="addressLine1"
+                  name="policeReportIssueDate"
                   rules={[
                     {
                       required: true,
-                      message: "Please Pick a date",
+                      message: "Please enter the Police Report Issue Date",
                     },
                   ]}
                 >
                   <Input disabled={!isEditable} />
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Police Report"
-                  name="addressLine2"
+                  name="policeReport"
                   rules={[
-                    {
-                      required: false,
-                      message: "Please enter your address line!",
-                    },
+                    { required: true, message: "Please upload your police report!" },
                   ]}
                 >
-                  <Upload {...props}  disabled={!isEditable}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  {data?.policeReportDocUrl ? (
+                    <a href={data.policeReportDocUrl} target="_blank" rel="noopener noreferrer">
+                      View Police Report
+                    </a>
+                  ) : (
+                    <Upload disabled={!isEditable}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="CV"
-                  name="postalCode"
+                  name="cv"
                   rules={[
-                    {
-                      required: true,
-                      message: "Please enter your postal code!",
-                    },
+                    { required: true, message: "Please upload your CV!" },
                   ]}
                 >
-                  <Upload {...props}  disabled={!isEditable}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  {data?.cvUrl ? (
+                    <a href={data.cvUrl} target="_blank" rel="noopener noreferrer">
+                      View CV
+                    </a>
+                  ) : (
+                    <Upload disabled={!isEditable}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Birth Certificate"
-                  name="postalCode"
+                  name="birthCertificate"
                   rules={[
-                    {
-                      required: true,
-                      message: "Please enter your postal code!",
-                    },
+                    { required: true, message: "Please upload your birth certificate!" },
                   ]}
                 >
-                  <Upload {...props}  disabled={!isEditable}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  {data?.birthCertificateDoUrl ? (
+                    <a href={data.birthCertificateDoUrl} target="_blank" rel="noopener noreferrer">
+                      View Birth Certificate
+                    </a>
+                  ) : (
+                    <Upload disabled={!isEditable}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
+
               <Col sm={10} lg={12}>
                 <Form.Item<FieldType>
                   label="Photo"
-                  name="postalCode"
+                  name="photo"
                   rules={[
-                    {
-                      required: true,
-                      message: "Please enter your postal code!",
-                    },
+                    { required: true, message: "Please upload your photo!" },
                   ]}
                 >
-                  <Upload {...props}  disabled={!isEditable}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  {data?.photoUrl ? (
+                    <a href={data.photoUrl} target="_blank" rel="noopener noreferrer">
+                      View Photo
+                    </a>
+                  ) : (
+                    <Upload disabled={!isEditable}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
