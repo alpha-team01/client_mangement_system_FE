@@ -14,6 +14,10 @@ const api: AxiosInstance = axios.create({
 // Interceptor to add token to headers of every request
 api.interceptors.request.use(
     config => {
+        // if a multipart form data is being sent, do not add the content type
+        if (config.headers['Content-Type'] === 'multipart/form-data') {
+            return config;
+        }
         config.headers['Content-Type'] = "application/json"
 
         return config;
