@@ -11,7 +11,6 @@ import {
 } from "antd";
 import { Card } from "../../components";
 import { SaveOutlined, UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { uploadCustomerFile, registerCustomer, getAllAdminUsers } from "../../api/services/Common";
 
@@ -70,7 +69,7 @@ export const CustomerRegistration = () => {
     }
   };
 
-  const handleBeforeUpload = (file: any, fileType: string) => {
+  const handleBeforeUpload = (file: any, fileType: "passport" | "policeReport" | "cv" | "birthCertificate" | "photo") => {
     setFileList((prevFiles: any) => ({
       ...prevFiles,
       [fileType]: file,
@@ -86,7 +85,7 @@ export const CustomerRegistration = () => {
       // Upload each file
       for (const fileType in fileList) {
         const file = fileList[fileType];
-        const fileURL = await uploadCustomerFile(file, fileType, values.passNum);
+        const fileURL = await uploadCustomerFile(file, fileType as "passport" | "policeReport" | "cv" | "birthCertificate" | "photo", values.passNum);
         uploadedFileURLs[fileType] = fileURL;
       }
   
@@ -129,7 +128,7 @@ export const CustomerRegistration = () => {
     }
   };
 
-  const uploadProps = (fileType: string) => ({
+  const uploadProps = (fileType:  "passport" | "policeReport" | "cv" | "birthCertificate" | "photo") => ({
     name: "file",
     multiple: false,
     beforeUpload: (file: any) => handleBeforeUpload(file, fileType),

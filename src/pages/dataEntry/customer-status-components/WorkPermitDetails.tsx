@@ -1,172 +1,426 @@
-import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
-import { Card, ConfigProvider, Flex, message, Table, Upload } from "antd";
-
 import {
-  Button,
-  Col,
-  Form,
   Row,
+  Col,
+  Card,
+  Form,
+  Upload,
+  Button,
+  UploadProps,
+  message,
+  Table,
+  ConfigProvider,
+  Modal,
+  Input,
+  Space,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { useState } from "react";
-import { StateWiseDocDetails } from '../../../types/customerStatus';
+import {
+  InboxOutlined,
+  PlusCircleOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { ColumnsType } from "antd/es/table/interface";
+import { useLocation } from "react-router-dom";
+import { Customer } from "../../../types";
+import {
+  makeCustomerPayment,
+  uploadCustomerPaymentSlip,
+  uploadWorkPermit,
+  uploadWorkPermitPaymentSlip,
+  uploadWorkPermitToDb,
+} from "../../../api/services/Common";
+import { set } from "lodash";
 
-interface PaymentColumnDataType {
+interface DataType {
   key: string;
   payment: string;
   amount: number;
   date: string;
+  paymentReceiptUrl?: string;
 }
 
-const paymentData: PaymentColumnDataType[] = [];
-for (let i = 1; i <= 5; i++) {
-  paymentData.push({ key: `${i}`, payment: "Payment " + i, amount: 100000, date: "2021-11-10" });
+interface PendingProps {
+  data: {
+    stateWisePaymentDetails: Array<{
+      id: string;
+      receivedBy: string;
+      amount: number;
+      receivedDate: string;
+    }>;
+    totalAmount: number;
+    remainingAmount: number;
+    docUrl: string;
+  };
 }
 
-const columns: ColumnsType<PaymentColumnDataType> = [
-  {
-    title: "Payment",
-    dataIndex: "payment",
-    key: "payment",
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-  },
-  {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-  },
-];
+export const WorkPermitDetails = ({ data }: PendingProps) => {
+  const [bordered] = useState(false);
+  const [showFooter] = useState(true);
 
-export const WorkPermitDetails = ({data}) => {
-  const [totalAmount] = useState<number>(300000);
-  const [firstPayment] = useState<number>(100000);
-  const [remainingAmount, setRemainingAmount] = useState<number>(200000);
-  const [bordered, setBordered] = useState(false);
-  const [showHeader, setShowHeader] = useState(false);
-  const [showFooter, setShowFooter] = useState(true);
+  const [paymentModel, setPaymentModel] = useState(false);
+  const [workPermitModal, setWorkPermitModal] = useState(false);
+  const [tableData, setTableData] = useState<DataType[]>([]);
 
-  // Handle Upload component logic properly with fileList prop
+  useEffect(() => {
+    setTableData(
+      data.stateWisePaymentDetails.map((item: any, index: number) => {
+        return {
+          key: index.toString(),
+          payment: item.receivedBy,
+          amount: item.amount,
+          date: item.receivedDate,
+          paymentReceiptUrl: item.paymentReceiptUrl,
+        };
+      })
+    );
+  }, []);
+
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "Payment Received By",
+      dataIndex: "payment",
+      key: "payment",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "View Slip",
+      key: "view",
+      render: (text: any, record: DataType) => (
+        <Button
+          type="link"
+          onClick={() => {
+            window.open(record.paymentReceiptUrl, "_blank");
+          }}
+        >
+          View
+        </Button>
+      ),
+    },
+  ];
+
+  const location = useLocation();
   const [fileList, setFileList] = useState<any[]>([]);
 
-  console.log("data", data);
+  const { Dragger } = Upload;
+  const [paymentForm] = Form.useForm();
+  const [workPermitForm] = Form.useForm();
 
-  const props: UploadProps = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    fileList, // Use fileList instead of value
-    onChange(info) {
-      const { file, fileList: newFileList } = info;
-      setFileList(newFileList); // Update fileList when file is uploaded
-
-      if (file.status === "done") {
-        message.success(`${file.name} file uploaded successfully`);
-      } else if (file.status === "error") {
-        message.error(`${file.name} file upload failed.`);
-      }
-    },
+  // Handle file selection
+  const handleBeforeUpload = (file: any) => {
+    setFileList([file]); // Keep a single file in the state
+    return false; // Prevent automatic upload
   };
 
-  const defaultFooter = () => <div>Remaining Amount: {remainingAmount}</div>;
+  const uploadProps: UploadProps = {
+    name: "file",
+    multiple: false,
+    beforeUpload: handleBeforeUpload, // Update the state with selected file
+  };
 
-  const tableProps = {
-    bordered,
-    showHeader,
-    footer: showFooter ? defaultFooter : undefined,
-    dataSource: paymentData,
-    columns,
-    pagination: false,
+  const handleAddWorkPermitPayment = () => {
+    setPaymentModel(true);
+  };
+
+  const handleWorkPermit = () => {
+    setWorkPermitModal(true);
+  };
+
+  const handleModalClose = () => {
+    paymentForm.resetFields();
+    setPaymentModel(false);
+    setFileList([]); // Reset file list
+  };
+
+  const handleWorkPermitClose = () => {
+    workPermitForm.resetFields();
+    setWorkPermitModal(false);
+    setFileList([]); // Reset file
+  };
+
+  const handleOnFinishPayment = async (values: any) => {
+    const { customer } = location.state as { customer: Customer };
+
+    if (!fileList.length) return message.error("Please upload a payment slip.");
+
+    try {
+      // Upload payment slip and prepare form data
+      const paymentSlipUrl = await uploadWorkPermitPaymentSlip(
+        fileList[0],
+        customer.key
+      );
+      const formDataToSubmit = {
+        customerId: customer.key,
+        userId: 9,
+        amount: values.amount,
+        stateId: 3,
+        paymentSlipUrl,
+      };
+
+      const response = await makeCustomerPayment(formDataToSubmit);
+
+      if (response.httpStatusCode !== 200) throw new Error("Payment failed.");
+
+      // Retrieve user name or default to "Admin"
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userName = `${user.firstName ?? "Admin"} ${
+        user.lastName ?? ""
+      }`.trim();
+
+      // Update table and remaining amount
+      setTableData([
+        ...tableData,
+        {
+          key: Math.random().toString(),
+          payment: userName,
+          amount: values.amount,
+          date: new Date().toLocaleDateString(),
+          paymentReceiptUrl: paymentSlipUrl,
+        },
+      ]);
+      set(data, "remainingAmount", data.remainingAmount - values.amount);
+
+      handleModalClose();
+      message.success("Payment made successfully!");
+    } catch (error) {
+      message.error("Failed to make payment.");
+      console.error(error);
+    }
+  };
+
+  const handleOnFinishUploadWorkPermit = async () => {
+    const { customer } = location.state as { customer: Customer };
+
+    if (!fileList.length)
+      return message.error("Please upload an offer letter.");
+
+    try {
+      // Upload offer letter and prepare form data
+      const workPermitUrl = await uploadWorkPermit(fileList[0], customer.key);
+
+      // set the offer letter URL to the database
+      const requestBody = {
+        customerId: customer.key,
+        userId: 9,
+        docUrl: workPermitUrl,
+      };
+
+      const response = await uploadWorkPermitToDb(requestBody)
+        .then((res) => {
+          if (res.httpStatusCode !== 200)
+            throw new Error("Failed to upload offer");
+
+          return res;
+        })
+        .catch((error) => {
+          console.error(error);
+          message.error("Failed to upload offer letter.");
+        });
+
+      if (response.httpStatusCode === 200) {
+        set(data, "docUrl", workPermitUrl);
+
+        handleModalClose();
+        message.success("Offer letter uploaded successfully!");
+      }
+
+      // Update offer letter URL
+    } catch (error) {
+      message.error("Failed to upload offer letter.");
+      console.error(error);
+    }
+  };
+
+  const defaultFooter = () => (
+    <Row>
+      <Col span={12}>
+        <strong>Total Amount</strong>
+      </Col>
+      <Col span={12}>
+        <strong>{data.totalAmount}</strong>
+      </Col>
+      <Col span={12}>
+        <strong>Remaining Amount</strong>
+      </Col>
+      <Col span={12}>
+        <strong>{data.remainingAmount}</strong>
+      </Col>
+    </Row>
+  );
+
+  const validateUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
   return (
     <>
-      meke input tika edit karannaa
       <Card style={{ backgroundColor: "#fff", marginTop: "1rem" }}>
         <Row>
-          <Col sm={10} lg={12}>
-            <Form name="inProgress" layout="vertical">
-              <Row gutter={[20, 0]}>
-                <Col sm={10} lg={12}>
+          <Col sm={10} lg={8}>
+          <Space direction={"vertical"} size={"large"}>
+            <Row gutter={[20, 0]}>
+              <Col sm={10} lg={12}>
+                {
+                  // check if data.docUrl is a vaild URl
+                  validateUrl(data.docUrl) ? (
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        window.open(data.docUrl, "_blank");
+                      }}
+                    >
+                      View Work Permit
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        icon={<PlusCircleOutlined />}
+                        onClick={handleWorkPermit}
+                      >
+                        Attach Work Permit
+                      </Button>
+                      <Modal
+                        open={workPermitModal}
+                        onCancel={handleWorkPermitClose}
+                        onOk={() => workPermitForm.submit()} // Submit the form when OK is clicked
+                      >
+                        <Form
+                          form={workPermitForm}
+                          name="workPermitForm}"
+                          layout="vertical"
+                          onFinish={handleOnFinishUploadWorkPermit}
+                        >
+                          <Form.Item
+                            name="workPermit"
+                            label="Attach Work Permit"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please upload a work permit",
+                              },
+                            ]}
+                          >
+                            <Dragger {...uploadProps}>
+                              <p className="ant-upload-drag-icon">
+                                <InboxOutlined />
+                              </p>
+                              <p className="ant-upload-text">
+                                Click or drag file to this area to upload
+                              </p>
+                              <p className="ant-upload-hint">
+                                Support PDF and Image files only. Maximum size
+                                of 2MB
+                              </p>
+                            </Dragger>
+                          </Form.Item>
+                        </Form>
+                      </Modal>
+                    </>
+                  )
+                }
+              </Col>
+            </Row>
+
+            <Row gutter={[20, 0]}>
+              <Col sm={10} lg={12}>
+                <Button
+                  icon={<PlusCircleOutlined />}
+                  onClick={handleAddWorkPermitPayment}
+                  disabled={data.remainingAmount <= 0}
+                >
+                  Add Payment
+                </Button>
+              </Col>
+              <Modal
+                open={paymentModel}
+                onCancel={handleModalClose}
+                onOk={() => paymentForm.submit()} // Submit the form when OK is clicked
+              >
+                <Form
+                  form={paymentForm}
+                  name="paymentForm"
+                  layout="vertical"
+                  onFinish={handleOnFinishPayment}
+                >
                   <Form.Item
-                    label="Work Permit"
-                    name="offerLetter"
+                    name="amount"
+                    label="Amount"
                     rules={[
-                      { required: true, message: "Please Attach your Offer Letter" },
+                      { required: true, message: "Please input the amount" },
                     ]}
                   >
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    <Input />
                   </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={[20, 0]}>
-                <Col sm={10} lg={12}>
                   <Form.Item
-                    label="CV"
                     name="paymentSlip"
+                    label="Payment Slip"
                     rules={[
-                      { required: true, message: "Please Attach your Payment Slip" },
+                      {
+                        required: true,
+                        message: "Please upload a payment slip",
+                      },
                     ]}
                   >
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    <Dragger {...uploadProps}>
+                      <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                      </p>
+                      <p className="ant-upload-text">
+                        Click or drag file to this area to upload slip
+                      </p>
+                      <p className="ant-upload-hint">
+                        Support PDF and Image files only. Maximum size of 2MB
+                      </p>
+                    </Dragger>
                   </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={[20, 0]}>
-                <Col sm={10} lg={12}>
-                  <Form.Item name="additionalPayment">
-                    <Upload {...props}>
-                      <Button icon={<PlusCircleOutlined />}>Add another payment</Button>
-                    </Upload>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
+                </Form>
+              </Modal>
+            </Row>
+          </Space>
+            
           </Col>
 
           <Col
             sm={10}
-            lg={12}
+            lg={16}
             style={{
               borderLeft: "2px solid #1890ff",
               padding: "20px",
               display: "flex",
             }}
           >
-            <Flex
-              // align={"center"}
-              justify="center"
-              vertical
-              style={{ flexGrow: "1" }}
-            >
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Table: {
-                      footerBg: "#f0f2f5",
-                    },
+            <ConfigProvider
+              theme={{
+                components: {
+                  Table: {
+                    footerBg: "#f0f2f5",
                   },
-                }}
-              >
-                <Table
-                  {...tableProps}
-                  pagination={false}
-                  columns={columns}
-                  dataSource={paymentData}
-                  scroll={{ y: 300 }}
-                />
-              </ConfigProvider>
-            </Flex>
+                },
+              }}
+            >
+              <Table
+                bordered={bordered}
+                showHeader
+                footer={showFooter ? defaultFooter : undefined}
+                dataSource={tableData}
+                columns={columns}
+                pagination={false}
+                scroll={{ y: 300 }}
+              />
+            </ConfigProvider>
           </Col>
         </Row>
       </Card>

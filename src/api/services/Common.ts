@@ -18,7 +18,7 @@ export const getCustomerById = (
 // Helper function to upload a single file to Google Drive
 export const uploadCustomerFile = async (
   file: File,
-  fileType: any,
+  fileType: 'passport' | 'policeReport' | 'cv' | 'birthCertificate' | 'photo',
   passNum: string
 ) => {
   const folderIds = {
@@ -82,7 +82,81 @@ export const uploadCustomerPaymentSlip = async (
   return response.data;
 };
 
-export const makeCustomerPayment = async (formData : any) => {
-  const response = await api.post(`/api/customer/makePayment/${formData.customerId}`, formData);
+export const makeCustomerPayment = async (formData: any) => {
+  const response = await api.post(
+    `/api/customer/makePayment/${formData.customerId}`,
+    formData
+  );
+  return response.data;
+};
+
+export const uploadOfferLetter = async (file: File, customerId: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const uniqueIdentifier = `${customerId}_${new Date().toISOString()}`;
+
+  const response = await api.post(`/api/drive/upload`, formData, {
+    params: {
+      folderId: import.meta.env.VITE_OFFER_PHASE_DOC,
+      uniqueIdentifier: uniqueIdentifier,
+    },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  // Return the uploaded file URL
+  return response.data;
+};
+
+export const uploadOfferLetterToDb = async (formData: any) => {
+  const response = await api.post(`/api/customer/uploadOfferLetter`, formData);
+  return response.data;
+};
+
+export const uploadWorkPermit = async (file: File, customerId: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const uniqueIdentifier = `${customerId}_${new Date().toISOString()}`;
+
+  const response = await api.post(`/api/drive/upload`, formData, {
+    params: {
+      folderId: import.meta.env.VITE_WORK_PERMIT_PHASE_DOC,
+      uniqueIdentifier: uniqueIdentifier,
+    },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  // Return the uploaded file URL
+  return response.data;
+};
+
+export const uploadWorkPermitPaymentSlip = async (
+  file: File,
+  paymentId: string
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post(`/api/drive/upload`, formData, {
+    params: {
+      folderId: import.meta.env.VITE_WORK_PERMIT_PHASE_PAY_SLIPS,
+      uniqueIdentifier: paymentId,
+    },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  // Return the uploaded file URL
+  return response.data;
+};
+
+export const uploadWorkPermitToDb = async (formData: any) => {
+  const response = await api.post(`/api/customer/uploadWorkPermit`, formData);
   return response.data;
 };

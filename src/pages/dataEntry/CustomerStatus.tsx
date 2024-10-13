@@ -29,7 +29,7 @@ export const CustomerStatus = () => {
 
   const [customerData, setCustomerData] = useState<RegistrationDetails>();
   const [offerData, setOfferData] = useState<any>();
-  const [workPermitData, setWorkPermitData] = useState<StateWiseDocDetails>();
+  const [workPermitData, setWorkPermitData] = useState<any>();
 
   const items = [
     { title: "Registered", description: "Pending" },
