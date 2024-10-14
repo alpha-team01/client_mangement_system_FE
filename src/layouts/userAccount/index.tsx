@@ -21,40 +21,50 @@ const { Link } = Typography;
 import './styles.css';
 import { useEffect, useState } from 'react';
 
-const DESCRIPTION_ITEMS: DescriptionsProps['items'] = [
-  {
-    key: 'full-name',
-    label: 'Name',
-    children: <span>Kelvin Kiptum Kiprop</span>,
-  },
-  {
-    key: 'job-title',
-    label: 'Job title',
-    children: <span>Software Engineer</span>,
-  },
-  {
-    key: 'email',
-    label: 'Email',
-    children: (
-      <Link href="mailto:kelvin.kiprop96@gmail.com">
-        kelvin.kiprop96@gmail.com
-      </Link>
-    ),
-  },
-  {
-    key: 'telephone',
-    label: 'Phone',
-    children: <Link href="tel:+254706094433">+94 70 094 4433</Link>,
-  },
-  
-];
-
-const TAB_ITEMS: TabsProps['items'] = USER_PROFILE_ITEMS.map((u) => ({
-  key: u.title,
-  label: u.title,
-}));
 
 export const UserAccountLayout = () => {
+
+  const [descritionItems, setDescritionItems] = useState<DescriptionsProps['items']>([]);
+
+  useEffect(() => {
+      const user = localStorage.getItem('user');
+
+      const userObj = user && JSON.parse(user);
+
+      
+      const DESCRIPTION_ITEMS: DescriptionsProps['items'] = [
+        {
+          key: 'full-name',
+          label: 'Name',
+          children: <span>
+            {userObj?.firstName} {userObj?.lastName}
+          </span>,
+        },
+        {
+          key: 'role',
+          label: 'Role',
+          children: <span>{userObj?.role}</span>,
+        },
+        {
+          key: 'email',
+          label: 'Email',
+          children: (
+            <Link href="mailto:kelvin.kiprop96@gmail.com">
+              {userObj?.email}
+            </Link>
+          ),
+        }
+      ];
+
+      setDescritionItems(DESCRIPTION_ITEMS);
+  }, []);
+
+  
+  const TAB_ITEMS: TabsProps['items'] = USER_PROFILE_ITEMS.map((u) => ({
+    key: u.title,
+    label: u.title,
+  }));
+
   const {
     token: { borderRadius },
   } = theme.useToken();
@@ -114,7 +124,7 @@ export const UserAccountLayout = () => {
             <Col xs={24} sm={16} lg={20}>
               <Descriptions
                 title="User Info"
-                items={DESCRIPTION_ITEMS}
+                items={descritionItems}
                 column={{ xs: 1, sm: 2, md: 2, lg: 3, xl: 3, xxl: 4 }}
               />
             </Col>

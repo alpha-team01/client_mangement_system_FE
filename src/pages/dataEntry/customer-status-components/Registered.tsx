@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { useStylesContext } from "../../../context";
 import { RegistrationDetails } from "../../../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type FieldType = {
   passportNumber?: string;
@@ -24,17 +24,16 @@ type FieldType = {
 
 type RegisteredProps = {
   data?: RegistrationDetails; // Pass customer data here
-  isEditable: boolean; // Prop to control editability
-  onSave: () => void;
 };
 
-export const Registered = ({ data, isEditable, onSave }: RegisteredProps) => {
+export const Registered = ({ data }: RegisteredProps) => {
   const context = useStylesContext();
+  const [isEditable,  setIsEditable] = useState<boolean>(false);
+
   const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {
+  const handleSaveChanges = (values: any) => {
     console.log("Success:", values);
-    onSave();
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -61,7 +60,7 @@ export const Registered = ({ data, isEditable, onSave }: RegisteredProps) => {
             form={form}
             name="user-profile-address-form"
             layout="vertical"
-            onFinish={onFinish}
+            onFinish={handleSaveChanges}
             onFinishFailed={onFinishFailed}
             autoComplete="on"
             requiredMark={false}
@@ -198,13 +197,21 @@ export const Registered = ({ data, isEditable, onSave }: RegisteredProps) => {
               </Col>
             </Row>
 
-            {isEditable && (
+            {isEditable ? (
               <Form.Item>
-                <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                <Button type="primary" htmlType="submit" icon={<SaveOutlined />} onClick={handleSaveChanges}>
                   Save changes
                 </Button>
               </Form.Item>
-            )}
+            ) : (
+              <Button
+                type="primary"
+                onClick={() => setIsEditable(true)}
+              >
+                Edit
+              </Button>
+            )
+            }
           </Form>
         </Card>
       </Col>

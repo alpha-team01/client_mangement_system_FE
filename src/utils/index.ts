@@ -175,3 +175,20 @@ export const goToTop = () => {
 export const numberWithCommas = (x: number) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
+
+export const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "LKR",
+    minimumFractionDigits: 2,
+  }).format(value);
+};
+
+export function capitalizeFirstLetter(str : string) : string {
+  return str
+    .split(" ") // Split the string into an array of words
+    .map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1) // Capitalize the first letter of each word
+    )
+    .join(" "); // Join the words back into a single string
+}

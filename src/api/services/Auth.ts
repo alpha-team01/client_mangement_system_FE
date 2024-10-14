@@ -18,7 +18,7 @@ export const postSignIn = (credentials: Credentials): Promise<AxiosResponse<any>
     return api.post<any>('/api/user/login', credentials)
         .then((response) => {
             if (response.status === 200) {
-                const user: User = response.data.reponseObject;
+                const user: User = response.data.responseObject;
             }
             return response;
         })

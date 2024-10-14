@@ -36,6 +36,7 @@ import { NProgress } from '../../components';
 import { PATH_ACCOUNT, PATH_AUTH, PATH_LANDING, PATH_USER_PROFILE } from '../../constants';
 import { doSignOut } from '../../api/services/Auth.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
+import { capitalizeFirstLetter } from '../../utils/index.ts';
 
 
 
@@ -161,7 +162,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
             <Flex align="center" gap="small">
               
               <Typography.Text>
-                Welcome {user?.firstName} {user?.lastName}
+                Welcome {capitalizeFirstLetter(`${user?.firstName} ${user?.lastName}`)}
               </Typography.Text>
 
               <Dropdown menu={{ items }} trigger={['click']}>
