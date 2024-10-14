@@ -68,15 +68,12 @@ const PageWrapper = ({ children }: PageProps) => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <SignInPage />,
+    element: (
+      <AuthProvider>
+        <SignInPage />
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: "",
-        element: <HomePage />,
-      },
-    ],
   },
   // {
   //   path: "/home",
@@ -93,7 +90,11 @@ const router = createBrowserRouter([
 
   {
     path: "/user-profile",
-    element: <PageWrapper children={<UserAccountLayout />} />,
+    element: (
+      <AuthProvider>
+        <PageWrapper children={<UserAccountLayout />} />
+      </AuthProvider>
+  ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -143,44 +144,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "errors",
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "400",
-        element: <Error400Page />,
-      },
-      {
-        path: "403",
-        element: <Error403Page />,
-      },
-      {
-        path: "404",
-        element: <Error404Page />,
-      },
-      {
-        path: "500",
-        element: <Error500Page />,
-      },
-      {
-        path: "503",
-        element: <Error503Page />,
-      },
-    ],
-  },
-  {
-    path: "/about",
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: "",
-        element: <AboutPage />,
-      },
-    ],
-  },
+
   // admin routes
   {
     path: "/admin",

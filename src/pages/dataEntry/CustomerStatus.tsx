@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Flex, Spin, Steps } from "antd";
+import { Button, Col, Flex, Row, Spin, Steps } from "antd";
 import { WorkPermitDetails } from "./customer-status-components/WorkPermitDetails";
 import { Pending } from "./customer-status-components/Pending";
 import { useLocation } from "react-router-dom";
@@ -7,13 +7,13 @@ import { Customer } from "../../types";
 import { Registered } from "./customer-status-components/Registered";
 import { VisaInformation } from "./customer-status-components/VisaInformation";
 import ButtonGroup from "antd/es/button/button-group";
-import { set, toLower } from "lodash";
+import { toLower } from "lodash";
 import { getCustomerById } from "../../api/services/Common";
+import { Card } from "../../components/Card/Card";
 import {
   RegistrationDetails,
   StateWiseDocDetails,
 } from "../../types/customerStatus";
-import { Loader } from "../../components";
 
 export const CustomerStatus = () => {
   const location = useLocation();
@@ -24,17 +24,21 @@ export const CustomerStatus = () => {
   const [previousBtnStatus, setPreviousBtnStatus] = useState(false);
   const [nextBtnStatus, setNextBtnStatus] = useState(false);
 
-  const [editBtnText, setEditBtnText] = useState<"Edit" | "Save">("Edit");
-  const [isFormEditable, setIsFormEditable] = useState(false);
-
   const [customerData, setCustomerData] = useState<RegistrationDetails>();
   const [offerData, setOfferData] = useState<any>();
   const [workPermitData, setWorkPermitData] = useState<any>();
+  const [visaData, setVisaData] = useState<any>();
 
   const items = [
-    { title: "Registered", description: "Pending" },
-    { title: "Offer Information", description: "Pending" },
-    { title: "Work Permit Details", description: "Pending" },
+    { title: "Registered", description: "Success" },
+    {
+      title: "Offer Information",
+      description: offerData?.status === "S" ? "Success" : "Pending",
+    },
+    {
+      title: "Work Permit Details",
+      description: workPermitData?.status === "S" ? "Success" : "Pending",
+    },
     { title: "Visa Information", description: "Pending" },
   ];
 
@@ -49,19 +53,20 @@ export const CustomerStatus = () => {
         console.log("customer details", res.data.responseObject);
         setCustomerData(res.data.responseObject);
 
-        setOfferData(
-          res.data.responseObject.stateWiseDocDetails.find(
-            (doc: StateWiseDocDetails) => doc.stateId === 2
-          )
+        const offer = res.data.responseObject.stateWiseDocDetails.find(
+          (doc: StateWiseDocDetails) => doc.stateId == 2
         );
+        setOfferData(offer); // setting offerData
 
-        console.log("offerData", offerData);
-
-        setWorkPermitData(
-          res.data.responseObject.stateWiseDocDetails.find(
-            (doc: StateWiseDocDetails) => doc.stateId === 3
-          )
+        const workPermit = res.data.responseObject.stateWiseDocDetails.find(
+          (doc: StateWiseDocDetails) => doc.stateId == 3
         );
+        setWorkPermitData(workPermit);
+
+        const visa = res.data.responseObject.stateWiseDocDetails.find(
+          (doc: StateWiseDocDetails) => doc.stateId == 4
+        );
+        setVisaData(visa);
 
         console.log("workPermitData", workPermitData);
       })
@@ -114,74 +119,54 @@ export const CustomerStatus = () => {
     }
   };
 
-  const handleEditClick = () => {
-    if (editBtnText === "Edit") {
-      setEditBtnText("Save");
-      setIsFormEditable(true);
-
-      // dissable the next and previous button
-      setNextBtnStatus(true);
-      setPreviousBtnStatus(true);
-    } else {
-      // Call a function to save the data to the backend
-      // After saving, revert the form to read-only
-      console.log("Save the changes");
-
-      // Set back to read-only mode
-      setEditBtnText("Edit");
-      setIsFormEditable(false);
-    }
-  };
-
-  const handleSaveFromChild = () => {
-    // Switch back to "Edit" mode after saving
-    setEditBtnText("Edit");
-    setIsFormEditable(false);
-
-    // Enable the next and previous button
-    setNextBtnStatus(false);
-    setPreviousBtnStatus(false);
-  };
   return (
     <>
-      <Col span={24}>
-        <Spin spinning={loading} >
-          <Steps
-            current={current}
-            labelPlacement="vertical"
-            items={items}
-            onChange={onStepChange}
-          />
-
-          {current === 0 && (
-            <Registered
-              data={customerData}
-              isEditable={isFormEditable}
-              onSave={handleSaveFromChild}
+      <Row>
+        <Col span={24}>
+          <Spin spinning={loading}>
+            <Steps
+              current={current}
+              labelPlacement={"horizontal"}
+              items={items}
+              onChange={onStepChange}
             />
-          )}
-          {current === 1 && <Pending data={offerData} />}
-          {current === 2 && <WorkPermitDetails data={workPermitData} />}
-          {current === 3 && <VisaInformation />}
-        </Spin>
-      </Col>
+            {/* make this part to get the maximun heigth */}
+            <Card
+              style={{
+                backgroundColor: "#fff",
+                marginTop: "1rem",
+                height: "100%",
+              }}
+            >
+              {current === 0 && <Registered data={customerData} />}
+              {current === 1 && <Pending pendingData={offerData} />}
+              {current === 2 && (
+                <WorkPermitDetails workPermitData={workPermitData} />
+              )}
+              {current === 3 && (
+                <VisaInformation visaInfomationData={visaData} />
+              )}
+            </Card>
+          </Spin>
+        </Col>
 
-      <Col span={24} style={{ marginTop: "1rem" }}>
-        {/* add a button group called next pervious and edit */}
-        <Flex justify="flex-end">
-          <ButtonGroup>
-            <Button onClick={handlePreviousClick} disabled={previousBtnStatus}>
-              Previous
-            </Button>
-            {editBtnText === "Edit" && (
-              <Button onClick={handleEditClick}>{editBtnText}</Button>
-            )}
-            <Button onClick={handleNextClick} disabled={nextBtnStatus}>
-              Next
-            </Button>
-          </ButtonGroup>
-        </Flex>
-      </Col>
+        <Col span={24} style={{ marginTop: "1rem" }}>
+          {/* add a button group called next pervious and edit */}
+          <Flex justify="flex-end">
+            <ButtonGroup>
+              <Button
+                onClick={handlePreviousClick}
+                disabled={previousBtnStatus}
+              >
+                Previous
+              </Button>
+              <Button onClick={handleNextClick} disabled={nextBtnStatus}>
+                Next
+              </Button>
+            </ButtonGroup>
+          </Flex>
+        </Col>
+      </Row>
     </>
   );
 };

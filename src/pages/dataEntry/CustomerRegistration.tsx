@@ -91,8 +91,8 @@ export const CustomerRegistration = () => {
   
       //  change the date format to dd-MM-yyyy
       const dateNew = new Date(values.prIssueDate);
-      const day = dateNew.getDate();
-      const month = dateNew.getMonth() + 1;
+      const day = dateNew.getDate().toString().padStart(2, '0');
+      const month = (dateNew.getMonth() + 1).toString().padStart(2, '0');
       const year = dateNew.getFullYear();
 
 

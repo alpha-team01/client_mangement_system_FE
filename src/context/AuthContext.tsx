@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { PATH_ADMIN, PATH_DATA_ENTRY, PATH_SUPER_ADMIN } from "../constants/routes";
+import { PATH_ADMIN, PATH_AUTH, PATH_DATA_ENTRY, PATH_SUPER_ADMIN } from "../constants/routes";
+import { message } from "antd";
 
 interface User {
   email: string;
   firstName: string;
   lastName: string;
-  roleId: number;
+  id: number;
   role: string;
 }
 
@@ -59,6 +60,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     setUser(null); // Clear the user in the context
     localStorage.removeItem("user"); // Clear the user from localStorage
+    navigate(PATH_AUTH.signin); // Redirect to the login page
+    message.success("You have been logged out successfully"); 
   };
 
 

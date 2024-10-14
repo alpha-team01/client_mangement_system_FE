@@ -16,19 +16,20 @@ import {
 import {
   InboxOutlined,
   PlusCircleOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { ColumnsType } from "antd/es/table/interface";
 import { useLocation } from "react-router-dom";
 import { Customer } from "../../../types";
 import {
+  getCustomerStateWiseDocDetails,
   makeCustomerPayment,
   uploadCustomerPaymentSlip,
   uploadOfferLetter,
   uploadOfferLetterToDb,
 } from "../../../api/services/Common";
-import { set } from "lodash";
+import { useAuth } from "../../../context/AuthContext";
+import { capitalizeFirstLetter, formatCurrency } from "../../../utils";
 
 interface DataType {
   key: string;
@@ -39,20 +40,10 @@ interface DataType {
 }
 
 interface PendingProps {
-  data: {
-    stateWisePaymentDetails: Array<{
-      id: string;
-      receivedBy: string;
-      amount: number;
-      receivedDate: string;
-    }>;
-    totalAmount: number;
-    remainingAmount: number;
-    docUrl: string;
-  };
+  pendingData: any;
 }
 
-export const Pending = ({ data }: PendingProps) => {
+export const Pending = ({ pendingData }: PendingProps) => {
   const [bordered] = useState(false);
   const [showFooter] = useState(true);
 
@@ -60,39 +51,51 @@ export const Pending = ({ data }: PendingProps) => {
   const [offerLetterModal, setOfferLetterModal] = useState(false);
   const [tableData, setTableData] = useState<DataType[]>([]);
 
-  useEffect(() => {
-    setTableData(
-      data.stateWisePaymentDetails.map((item: any, index: number) => {
-        return {
-          key: index.toString(),
-          payment: item.receivedBy,
-          amount: item.amount,
-          date: item.receivedDate,
-          paymentReceiptUrl: item.paymentReceiptUrl,
-        };
-      })
-    );
-  }, []);
+  const {user} = useAuth();
+
+  const location = useLocation();
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  const { Dragger } = Upload;
+  const [paymentForm] = Form.useForm();
+  const [offerLetterForm] = Form.useForm();
+
+
+  const [data , setData] = useState<any>({
+    stateWisePaymentDetails: [],
+    totalAmount: 0,
+    remainingAmount: 0,
+    docUrl: "",
+  });
+
+  const [loadingPayment, setLoadingPayment] = useState(false); // Loading state for Payment modal
+  const [loadingOffer, setLoadingOffer] = useState(false); // Loading state for Offer modal
+
 
   const columns: ColumnsType<DataType> = [
     {
       title: "Payment Received By",
       dataIndex: "payment",
       key: "payment",
+      render: (text: string) => <strong>{capitalizeFirstLetter(text)}</strong>,
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      align: "right",
+      render: (amount: number) => formatCurrency(amount),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      align: "right",
     },
     {
       title: "View Slip",
       key: "view",
+      align: "right",
       render: (text: any, record: DataType) => (
         <Button
           type="link"
@@ -106,12 +109,32 @@ export const Pending = ({ data }: PendingProps) => {
     },
   ];
 
-  const location = useLocation();
-  const [fileList, setFileList] = useState<any[]>([]);
 
-  const { Dragger } = Upload;
-  const [paymentForm] = Form.useForm();
-  const [offerLetterForm] = Form.useForm();
+  useEffect(() => {
+    setData(pendingData ?? {
+      stateWisePaymentDetails: [],
+      totalAmount: 0,
+      remainingAmount: 0,
+      docUrl: "",
+    });
+  }
+  , []);
+  
+ 
+  useEffect(() => {
+    setTableData(
+      data.stateWisePaymentDetails.map((item: any, index: number) => {
+        return {
+          key: index.toString(),
+          payment: item.receivedBy,
+          amount: item.amount,
+          date: item.receivedDate,
+          paymentReceiptUrl: item.paymentReceiptUrl,
+        };
+      })
+    );
+  }, [data]);
+
 
   // Handle file selection
   const handleBeforeUpload = (file: any) => {
@@ -145,7 +168,11 @@ export const Pending = ({ data }: PendingProps) => {
     setFileList([]); // Reset file
   };
 
+
   const handleOnFinishPayment = async (values: any) => {
+    if (loadingPayment) return; // Prevent multiple submissions
+    setLoadingPayment(true);
+
     const { customer } = location.state as { customer: Customer };
 
     if (!fileList.length) return message.error("Please upload a payment slip.");
@@ -158,7 +185,7 @@ export const Pending = ({ data }: PendingProps) => {
       );
       const formDataToSubmit = {
         customerId: customer.key,
-        userId: 9,
+        userId: user?.id,
         amount: values.amount,
         stateId: 2,
         paymentSlipUrl,
@@ -168,34 +195,27 @@ export const Pending = ({ data }: PendingProps) => {
 
       if (response.httpStatusCode !== 200) throw new Error("Payment failed.");
 
-      // Retrieve user name or default to "Admin"
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const userName = `${user.firstName ?? "Admin"} ${
-        user.lastName ?? ""
-      }`.trim();
+      const updatedData = await getCustomerStateWiseDocDetails(customer.key, 2);
+      setData(updatedData.responseObject);  
 
-      // Update table and remaining amount
-      setTableData([
-        ...tableData,
-        {
-          key: Math.random().toString(),
-          payment: userName,
-          amount: values.amount,
-          date: new Date().toLocaleDateString(),
-          paymentReceiptUrl: paymentSlipUrl,
-        },
-      ]);
-      set(data, "remainingAmount", data.remainingAmount - values.amount);
 
       handleModalClose();
+
+
       message.success("Payment made successfully!");
     } catch (error) {
       message.error("Failed to make payment.");
       console.error(error);
+    } finally {
+      setLoadingPayment(false); 
     }
   };
 
   const handleOnFinishUploadOfferLetter = async () => {
+
+    if (loadingOffer) return; // Prevent multiple submissions
+    setLoadingOffer(true);
+
     const { customer } = location.state as { customer: Customer };
 
     if (!fileList.length)
@@ -207,12 +227,12 @@ export const Pending = ({ data }: PendingProps) => {
 
       // set the offer letter URL to the database
       const requestBody = {
-        customerId: customer.key,
-        userId: 9,
-        docUrl: offerLetterUrl,
+        userId: user?.id,
+        stateId : 2,
+        paymentSlipUrl: offerLetterUrl,
       };
 
-      const response = await uploadOfferLetterToDb(requestBody)
+      const response = await uploadOfferLetterToDb(requestBody, customer.key)
         .then((res) => {
           if (res.httpStatusCode !== 200)
             throw new Error("Failed to upload offer");
@@ -225,7 +245,9 @@ export const Pending = ({ data }: PendingProps) => {
         });
 
       if (response.httpStatusCode === 200) {
-        set(data, "docUrl", offerLetterUrl);
+        const updatedData = await getCustomerStateWiseDocDetails(customer.key, 2);
+
+        setData(updatedData.responseObject);
 
         handleModalClose();
         message.success("Offer letter uploaded successfully!");
@@ -235,6 +257,8 @@ export const Pending = ({ data }: PendingProps) => {
     } catch (error) {
       message.error("Failed to upload offer letter.");
       console.error(error);
+    } finally {
+      setLoadingOffer(false);
     }
   };
 
@@ -243,14 +267,14 @@ export const Pending = ({ data }: PendingProps) => {
       <Col span={12}>
         <strong>Total Amount</strong>
       </Col>
-      <Col span={12}>
-        <strong>{data.totalAmount}</strong>
+      <Col span={12} style={{ textAlign: "right" }}>
+        <strong>{formatCurrency(data.totalAmount)}</strong>
       </Col>
       <Col span={12}>
         <strong>Remaining Amount</strong>
       </Col>
-      <Col span={12}>
-        <strong>{data.remainingAmount}</strong>
+      <Col span={12} style={{ textAlign: "right" }}>
+        <strong>{formatCurrency(data.remainingAmount)}</strong>
       </Col>
     </Row>
   );
@@ -266,9 +290,9 @@ export const Pending = ({ data }: PendingProps) => {
 
   return (
     <>
-      <Card style={{ backgroundColor: "#fff", marginTop: "1rem" }}>
+      
         <Row>
-          <Col sm={10} lg={8}>
+          <Col sm={24} lg={8}>
           <Space direction={"vertical"} size={"large"}>
             <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>
@@ -295,6 +319,7 @@ export const Pending = ({ data }: PendingProps) => {
                         open={offerLetterModal}
                         onCancel={handleOfferLetterClose}
                         onOk={() => offerLetterForm.submit()} // Submit the form when OK is clicked
+                        confirmLoading={loadingOffer}
                       >
                         <Form
                           form={offerLetterForm}
@@ -347,6 +372,7 @@ export const Pending = ({ data }: PendingProps) => {
                 open={paymentModel}
                 onCancel={handleModalClose}
                 onOk={() => paymentForm.submit()} // Submit the form when OK is clicked
+                confirmLoading={loadingPayment}
               >
                 <Form
                   form={paymentForm}
@@ -393,7 +419,7 @@ export const Pending = ({ data }: PendingProps) => {
           </Col>
 
           <Col
-            sm={10}
+            sm={24}
             lg={16}
             style={{
               borderLeft: "2px solid #1890ff",
@@ -422,7 +448,6 @@ export const Pending = ({ data }: PendingProps) => {
             </ConfigProvider>
           </Col>
         </Row>
-      </Card>
     </>
   );
 };

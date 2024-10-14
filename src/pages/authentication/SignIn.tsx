@@ -11,11 +11,6 @@ import {
   theme,
   Typography,
 } from "antd";
-import {
-  FacebookFilled,
-  GoogleOutlined,
-  TwitterOutlined,
-} from "@ant-design/icons";
 import { Logo } from "../../components";
 import { useMediaQuery } from "react-responsive";
 import { PATH_AUTH } from "../../constants/routes";
@@ -53,7 +48,7 @@ export const SignInPage = React.memo(() => {
       .then((res) => {
         if (res.status === 200) {
           console.log('Success:', res.data);
-          login(res.data.reponseObject);
+          login(res.data.responseObject);
           message.success('Login successful');
         } else {
           message.error('Login failed');

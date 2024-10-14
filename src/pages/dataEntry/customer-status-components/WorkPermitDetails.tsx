@@ -1,7 +1,6 @@
 import {
   Row,
   Col,
-  Card,
   Form,
   Upload,
   Button,
@@ -13,23 +12,20 @@ import {
   Input,
   Space,
 } from "antd";
-import {
-  InboxOutlined,
-  PlusCircleOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { InboxOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { ColumnsType } from "antd/es/table/interface";
 import { useLocation } from "react-router-dom";
 import { Customer } from "../../../types";
 import {
+  getCustomerStateWiseDocDetails,
   makeCustomerPayment,
-  uploadCustomerPaymentSlip,
   uploadWorkPermit,
   uploadWorkPermitPaymentSlip,
   uploadWorkPermitToDb,
 } from "../../../api/services/Common";
-import { set } from "lodash";
+import { useAuth } from "../../../context/AuthContext";
+import { capitalizeFirstLetter, formatCurrency } from "../../../utils";
 
 interface DataType {
   key: string;
@@ -40,7 +36,7 @@ interface DataType {
 }
 
 interface PendingProps {
-  data: {
+  workPermitData: {
     stateWisePaymentDetails: Array<{
       id: string;
       receivedBy: string;
@@ -53,7 +49,7 @@ interface PendingProps {
   };
 }
 
-export const WorkPermitDetails = ({ data }: PendingProps) => {
+export const WorkPermitDetails = ({ workPermitData }: PendingProps) => {
   const [bordered] = useState(false);
   const [showFooter] = useState(true);
 
@@ -61,39 +57,48 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
   const [workPermitModal, setWorkPermitModal] = useState(false);
   const [tableData, setTableData] = useState<DataType[]>([]);
 
-  useEffect(() => {
-    setTableData(
-      data.stateWisePaymentDetails.map((item: any, index: number) => {
-        return {
-          key: index.toString(),
-          payment: item.receivedBy,
-          amount: item.amount,
-          date: item.receivedDate,
-          paymentReceiptUrl: item.paymentReceiptUrl,
-        };
-      })
-    );
-  }, []);
+  const { user } = useAuth();
+  const location = useLocation();
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  const { Dragger } = Upload;
+  const [paymentForm] = Form.useForm();
+  const [workPermitForm] = Form.useForm();
+
+  const [loadmingPayment, setLoadingPayment] = useState(false);
+  const [loadingWorkPermit, setLoadingWorkPermit] = useState(false);
+
+  const [data, setData] = useState<any>({
+    stateWisePaymentDetails: [],
+    totalAmount: 0,
+    remainingAmount: 0,
+    docUrl: "",
+  });
 
   const columns: ColumnsType<DataType> = [
     {
       title: "Payment Received By",
       dataIndex: "payment",
       key: "payment",
+      render: (text: string) => <strong>{capitalizeFirstLetter(text)}</strong>,
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      align: "right",
+      render: (amount: number) => formatCurrency(amount),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      align: "right",
     },
     {
       title: "View Slip",
       key: "view",
+      align: "right",
       render: (text: any, record: DataType) => (
         <Button
           type="link"
@@ -107,12 +112,30 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
     },
   ];
 
-  const location = useLocation();
-  const [fileList, setFileList] = useState<any[]>([]);
+  useEffect(() => {
+    setData(
+      workPermitData ?? {
+        stateWisePaymentDetails: [],
+        totalAmount: 0,
+        remainingAmount: 0,
+        docUrl: "",
+      }
+    );
+  }, []);
 
-  const { Dragger } = Upload;
-  const [paymentForm] = Form.useForm();
-  const [workPermitForm] = Form.useForm();
+  useEffect(() => {
+    setTableData(
+      data.stateWisePaymentDetails.map((item: any, index: number) => {
+        return {
+          key: index.toString(),
+          payment: item.receivedBy,
+          amount: item.amount,
+          date: item.receivedDate,
+          paymentReceiptUrl: item.paymentReceiptUrl,
+        };
+      })
+    );
+  }, [data]);
 
   // Handle file selection
   const handleBeforeUpload = (file: any) => {
@@ -147,6 +170,9 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
   };
 
   const handleOnFinishPayment = async (values: any) => {
+    if (loadmingPayment) return;
+    setLoadingPayment(true);
+
     const { customer } = location.state as { customer: Customer };
 
     if (!fileList.length) return message.error("Please upload a payment slip.");
@@ -159,7 +185,7 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
       );
       const formDataToSubmit = {
         customerId: customer.key,
-        userId: 9,
+        userId: user?.id,
         amount: values.amount,
         stateId: 3,
         paymentSlipUrl,
@@ -170,33 +196,27 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
       if (response.httpStatusCode !== 200) throw new Error("Payment failed.");
 
       // Retrieve user name or default to "Admin"
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const userName = `${user.firstName ?? "Admin"} ${
-        user.lastName ?? ""
-      }`.trim();
-
-      // Update table and remaining amount
-      setTableData([
-        ...tableData,
-        {
-          key: Math.random().toString(),
-          payment: userName,
-          amount: values.amount,
-          date: new Date().toLocaleDateString(),
-          paymentReceiptUrl: paymentSlipUrl,
-        },
-      ]);
-      set(data, "remainingAmount", data.remainingAmount - values.amount);
+      const updaatedData = await getCustomerStateWiseDocDetails(
+        customer.key,
+        3
+      );
+      setData(updaatedData.responseObject);
 
       handleModalClose();
+
       message.success("Payment made successfully!");
     } catch (error) {
       message.error("Failed to make payment.");
       console.error(error);
+    } finally {
+      setLoadingPayment(false);
     }
   };
 
   const handleOnFinishUploadWorkPermit = async () => {
+    if (loadingWorkPermit) return;
+    setLoadingWorkPermit(true);
+
     const { customer } = location.state as { customer: Customer };
 
     if (!fileList.length)
@@ -208,12 +228,12 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
 
       // set the offer letter URL to the database
       const requestBody = {
-        customerId: customer.key,
-        userId: 9,
-        docUrl: workPermitUrl,
+        userId: user?.id,
+        stateId: 3,
+        paymentSlipUrl: workPermitUrl,
       };
 
-      const response = await uploadWorkPermitToDb(requestBody)
+      const response = await uploadWorkPermitToDb(requestBody, customer.key)
         .then((res) => {
           if (res.httpStatusCode !== 200)
             throw new Error("Failed to upload offer");
@@ -226,7 +246,11 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
         });
 
       if (response.httpStatusCode === 200) {
-        set(data, "docUrl", workPermitUrl);
+        const updaatedData = await getCustomerStateWiseDocDetails(
+          customer.key,
+          3
+        );
+        setData(updaatedData.responseObject);
 
         handleModalClose();
         message.success("Offer letter uploaded successfully!");
@@ -236,6 +260,8 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
     } catch (error) {
       message.error("Failed to upload offer letter.");
       console.error(error);
+    } finally {
+      setLoadingWorkPermit(false);
     }
   };
 
@@ -244,14 +270,14 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
       <Col span={12}>
         <strong>Total Amount</strong>
       </Col>
-      <Col span={12}>
-        <strong>{data.totalAmount}</strong>
+      <Col span={12} style={{ textAlign: "right" }}>
+        <strong>{formatCurrency(data.totalAmount)}</strong>
       </Col>
       <Col span={12}>
         <strong>Remaining Amount</strong>
       </Col>
-      <Col span={12}>
-        <strong>{data.remainingAmount}</strong>
+      <Col span={12} style={{ textAlign: "right" }}>
+        <strong>{formatCurrency(data.remainingAmount)}</strong>
       </Col>
     </Row>
   );
@@ -267,9 +293,8 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
 
   return (
     <>
-      <Card style={{ backgroundColor: "#fff", marginTop: "1rem" }}>
-        <Row>
-          <Col sm={10} lg={8}>
+      <Row>
+        <Col sm={24} lg={8}>
           <Space direction={"vertical"} size={"large"}>
             <Row gutter={[20, 0]}>
               <Col sm={10} lg={12}>
@@ -296,6 +321,7 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
                         open={workPermitModal}
                         onCancel={handleWorkPermitClose}
                         onOk={() => workPermitForm.submit()} // Submit the form when OK is clicked
+                        confirmLoading={loadingWorkPermit}
                       >
                         <Form
                           form={workPermitForm}
@@ -348,6 +374,7 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
                 open={paymentModel}
                 onCancel={handleModalClose}
                 onOk={() => paymentForm.submit()} // Submit the form when OK is clicked
+                confirmLoading={loadmingPayment}
               >
                 <Form
                   form={paymentForm}
@@ -390,40 +417,38 @@ export const WorkPermitDetails = ({ data }: PendingProps) => {
               </Modal>
             </Row>
           </Space>
-            
-          </Col>
+        </Col>
 
-          <Col
-            sm={10}
-            lg={16}
-            style={{
-              borderLeft: "2px solid #1890ff",
-              padding: "20px",
-              display: "flex",
+        <Col
+          sm={24}
+          lg={16}
+          style={{
+            borderLeft: "2px solid #1890ff",
+            padding: "20px",
+            display: "flex",
+          }}
+        >
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  footerBg: "#f0f2f5",
+                },
+              },
             }}
           >
-            <ConfigProvider
-              theme={{
-                components: {
-                  Table: {
-                    footerBg: "#f0f2f5",
-                  },
-                },
-              }}
-            >
-              <Table
-                bordered={bordered}
-                showHeader
-                footer={showFooter ? defaultFooter : undefined}
-                dataSource={tableData}
-                columns={columns}
-                pagination={false}
-                scroll={{ y: 300 }}
-              />
-            </ConfigProvider>
-          </Col>
-        </Row>
-      </Card>
+            <Table
+              bordered={bordered}
+              showHeader
+              footer={showFooter ? defaultFooter : undefined}
+              dataSource={tableData}
+              columns={columns}
+              pagination={false}
+              scroll={{ y: 300 }}
+            />
+          </ConfigProvider>
+        </Col>
+      </Row>
     </>
   );
 };
