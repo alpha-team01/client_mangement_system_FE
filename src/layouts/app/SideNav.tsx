@@ -1,19 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ConfigProvider, Layout, Menu, MenuProps, SiderProps } from "antd";
 import {
-  BugOutlined,
   LoginOutlined,
   PieChartOutlined,
-  ProductOutlined,
   SearchOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Logo } from "../../components";
 import { Link, useLocation } from "react-router-dom";
-import { PATH_DASHBOARD, PATH_DOCS, PATH_ERROR } from "../../constants";
 import { COLOR } from "../../App.tsx";
 import { PATH_HOME } from "../../constants/routes.ts";
-import { DashboardLayout } from '../dashboards/index';
 import { useAuth } from "../../context/AuthContext.tsx";
 
 const { Sider } = Layout;
@@ -36,56 +32,38 @@ const getItem = (
   } as MenuItem;
 };
 
-const itemsTest: MenuProps["items"] = [
-  getItem("Dashboards", "dashboards", <PieChartOutlined />, [
-    getItem(<Link to={PATH_DASHBOARD.default}>Default</Link>, "default", null),
-    getItem(
-      <Link to={PATH_DASHBOARD.projects}>Projects</Link>,
-      "projects",
-      null,
-    ),
-  ]),
-
-  getItem("Pages", "pages", null, [], "group"),
-
-  getItem("Errors", "errors", <BugOutlined />, [
-    getItem(<Link to={PATH_ERROR.error400}>400</Link>, "400", null),
-    getItem(<Link to={PATH_ERROR.error403}>403</Link>, "403", null),
-    getItem(<Link to={PATH_ERROR.error404}>404</Link>, "404", null),
-    getItem(<Link to={PATH_ERROR.error500}>500</Link>, "500", null),
-    getItem(<Link to={PATH_ERROR.error503}>503</Link>, "503", null),
-  ]),
-
-  getItem("Help", "help", null, [], "group"),
-  getItem(
-    <Link to={PATH_DOCS.productRoadmap} target="_blank">
-      Roadmap
-    </Link>,
-    "product-roadmap",
-    <ProductOutlined />,
-  ),
-];
-
 const adminItems: MenuProps["items"] = [
-  getItem("Admin", "admin", <PieChartOutlined />, [
-    getItem(<Link to="/admin">Admin</Link>, "admin", null),
+  getItem(<Link to="/admin/dashboard">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
+  getItem("Customer", "customer", <PieChartOutlined />, [
+    getItem(<Link to="/admin/search-customer">Search Customer</Link>, "admin/search-customer", <SearchOutlined />),
+  getItem(
+    <Link to="/admin/register-customer">Customer Registration</Link>,
+    "admin/register-customer", <UsergroupAddOutlined />,
+  ),
+  ]),
+  getItem("User", "user", <PieChartOutlined />, [
+    getItem(<Link to="/admin/search-user">Search User</Link>, "admin/search-user", <SearchOutlined />),
+  getItem(
+    <Link to="/admin/register-user">User Registration</Link>,
+    "admin/register-user", <UsergroupAddOutlined />,
+  ),
   ]),
 ];
 
 const superAdminItems: MenuProps["items"] = [
-  getItem(<Link to="/data-entry/search-customer">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
-  getItem("Customer", "super-admin", <PieChartOutlined />, [
-    getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "search-customer", <SearchOutlined />),
+  getItem(<Link to="/super-admin/dashboard">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
+  getItem("Customer", "customer", <PieChartOutlined />, [
+    getItem(<Link to="/super-admin/search-customer">Search Customer</Link>, "super-admin/search-customer", <SearchOutlined />),
   getItem(
-    <Link to="/data-entry/register-customer">Customer Registration</Link>,
-    "data-entry/information", <UsergroupAddOutlined />,
+    <Link to="/super-admin/register-customer">Customer Registration</Link>,
+    "super-admin/register-customer", <UsergroupAddOutlined />,
   ),
   ]),
-  getItem("User", "super-admin", <PieChartOutlined />, [
-    getItem(<Link to="/super-admin/search-user">Search User</Link>, "super-admin-search-user", <SearchOutlined />),
+  getItem("User", "user", <PieChartOutlined />, [
+    getItem(<Link to="/super-admin/search-user">Search User</Link>, "super-admin/search-user", <SearchOutlined />),
   getItem(
     <Link to="/super-admin/register-user">User Registration</Link>,
-    "data-entry/information", <UsergroupAddOutlined />,
+    "super-admin/register-user", <UsergroupAddOutlined />,
   ),
   ]),
 ];
@@ -93,16 +71,16 @@ const superAdminItems: MenuProps["items"] = [
 const dataEntryItems: MenuProps["items"] = [
   getItem(
     <Link to="/data-entry/">Dashboard</Link>,
-    "data-entry/", <PieChartOutlined />,
+    "/data-entry/", <PieChartOutlined />,
   ),
-  getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "data-entry", <SearchOutlined />),
+  getItem(<Link to="/data-entry/search-customer">Search Customer</Link>, "/data-entry/search-customer", <SearchOutlined />),
   getItem(
     <Link to="/data-entry/register-customer">Customer Registration</Link>,
-    "data-entry/information", <UsergroupAddOutlined />,
+    "/data-entry/register-customer", <UsergroupAddOutlined />,
   ),
 ];
 
-const rootSubmenuKeys = ["dashboards", "corporate", "user-profile"];
+const rootSubmenuKeys = ["customer", "user"];
 
 type SideNavProps = SiderProps;
 
@@ -112,8 +90,7 @@ const SideNav = ({ ...others }: SideNavProps) => {
 
   const { pathname } = useLocation();
   const [openKeys, setOpenKeys] = useState([""]);
-  const [current, setCurrent] = useState("");
-  const [items, setItems] = useState<MenuProps["items"]>(itemsTest);
+  const [items, setItems] = useState<MenuProps["items"]>();
 
 
   useEffect(() => {
@@ -124,16 +101,14 @@ const SideNav = ({ ...others }: SideNavProps) => {
       setItems(superAdminItems);
     } else if (user?.role.toLowerCase() === "data entry") {
       setItems(dataEntryItems);
-    } else {
-      setItems(superAdminItems);
-    }
+    } 
 
     // add the item signout at the end of each item list
     setItems((prev) => [
       ...(prev || []),
       getItem(<span onClick={logout}>Sign Out</span>, "sign-out", <LoginOutlined />),
     ]);
-  }, []);
+  }, [user]);
 
   const onClick: MenuProps["onClick"] = (e) => {
     console.log("click ", e);
@@ -151,7 +126,6 @@ const SideNav = ({ ...others }: SideNavProps) => {
   useEffect(() => {
     const paths = pathname.split("/");
     setOpenKeys(paths);
-    setCurrent(paths[paths.length - 1]);
   }, [pathname]);
 
   return (
@@ -183,7 +157,6 @@ const SideNav = ({ ...others }: SideNavProps) => {
           onClick={onClick}
           openKeys={openKeys}
           onOpenChange={onOpenChange}
-          selectedKeys={[current]}
           style={{ border: "none" }}
         />
       </ConfigProvider>

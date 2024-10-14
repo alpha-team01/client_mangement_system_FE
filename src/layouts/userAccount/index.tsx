@@ -20,6 +20,7 @@ const { Link } = Typography;
 
 import './styles.css';
 import { useEffect, useState } from 'react';
+import { capitalizeFirstLetter } from '../../utils/index';
 
 
 export const UserAccountLayout = () => {
@@ -37,13 +38,13 @@ export const UserAccountLayout = () => {
           key: 'full-name',
           label: 'Name',
           children: <span>
-            {userObj?.firstName} {userObj?.lastName}
+            {capitalizeFirstLetter(userObj?.firstName) + ' ' + capitalizeFirstLetter(userObj?.lastName)}
           </span>,
         },
         {
           key: 'role',
           label: 'Role',
-          children: <span>{userObj?.role}</span>,
+          children: <span>{capitalizeFirstLetter(userObj?.role)}</span>,
         },
         {
           key: 'email',

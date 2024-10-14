@@ -19,13 +19,15 @@ export const UserProfileDetailsPage = () => {
   
   const [form] = Form.useForm();
   
+  console.log('User:', user);
+
   useEffect(() => {
     form.setFieldsValue({
       firstName: user?.firstName,
       lastName: user?.lastName,
       email: user?.email,
     });
-  }, [form]);
+  }, [user, form]);
 
   const onFinish = async (values: any) => {
     setSaveBtnLoading(true);

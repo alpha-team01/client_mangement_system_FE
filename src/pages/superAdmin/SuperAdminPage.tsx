@@ -6,8 +6,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getallUsers } from "../../api/services/Common";
 import { User } from "../../types/user";
-import { result } from "lodash";
-import Password from "antd/es/input/Password";
 
 
 

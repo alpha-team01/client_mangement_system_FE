@@ -161,9 +161,39 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        path: "",
+        path: "dashboard",
         element: <AdminPage />,
       },
+      {
+        index: true,
+        path: "search-user",
+        element: <SuperAdminPage />, // Change this to AdminPage
+      },
+      {
+        index: true,
+        path: "register-user",
+        element: <RegisterUser />,
+      },
+      {
+        index: true,
+        path: "user-status",
+        element: <UserStatus />,
+      },
+      {
+        index: true,
+        path: "search-customer",
+        element: <CustomerSearch />,
+      },
+      {
+        index: true,
+        path: "register-customer",
+        element: <CustomerRegistration />,
+      },
+      {
+        index: true,
+        path: "customer-status",
+        element: <CustomerStatus />,
+      }
     ],
   },
 
@@ -181,6 +211,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        path: "dashboard",
+        element: <SuperAdminPage />,
+      },
+      {
+        index: true,
         path: "search-user",
         element: <SuperAdminPage />,
       },
@@ -194,6 +229,21 @@ const router = createBrowserRouter([
         path: "user-status",
         element: <UserStatus />,
       },
+      {
+        index: true,
+        path: "search-customer",
+        element: <CustomerSearch />,
+      },
+      {
+        index: true,
+        path: "register-customer",
+        element: <CustomerRegistration />,
+      },
+      {
+        index: true,
+        path: "customer-status",
+        element: <CustomerStatus />,
+      }
     ],
   },
 
