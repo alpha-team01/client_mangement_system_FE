@@ -8,7 +8,7 @@ import CountUp from 'react-countup';
 type Props = {
   title: string;
   value: number;
-  diff: number;
+  diff?: number | null;
   icon: any;
 } & CardProps;
 
@@ -24,13 +24,13 @@ export const StatsCard = ({ icon, title, value, diff, ...others }: Props) => {
           <Typography.Title level={2} className="m-0">
             <CountUp end={value} />
           </Typography.Title>
-          <Typography.Text
+          {diff && <Typography.Text
             strong
             style={{ color: diff > 0 ? green[5] : red[5] }}
           >
             {diff}%&nbsp;
             {diff > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-          </Typography.Text>
+          </Typography.Text>}
         </Flex>
       </Flex>
     </Card>

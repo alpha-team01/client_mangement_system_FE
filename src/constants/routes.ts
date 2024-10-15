@@ -198,7 +198,7 @@ export const PATH_ABOUT = {
 
 export const PATH_ADMIN = {
   root: ROOTS_ADMIN,
-  index: path(ROOTS_ADMIN, '/index'),
+  dashboard: path(ROOTS_ADMIN, '/dashboard'),
   users: path(ROOTS_ADMIN, '/users'),
   roles: path(ROOTS_ADMIN, '/roles'),
   permissions: path(ROOTS_ADMIN, '/permissions'),
@@ -206,7 +206,7 @@ export const PATH_ADMIN = {
 
 export const PATH_SUPER_ADMIN = {
   root: ROOTS_SUPER_ADMIN,
-  index: path(ROOTS_SUPER_ADMIN, '/index'),
+  dashboard: path(ROOTS_SUPER_ADMIN, '/dashboard'),
   users: path(ROOTS_SUPER_ADMIN, '/users'),
   roles: path(ROOTS_SUPER_ADMIN, '/roles'),
   permissions: path(ROOTS_SUPER_ADMIN, '/permissions'),

@@ -6,11 +6,9 @@ import {
 } from "../../components";
 import {
   BlockOutlined,
-  CarOutlined,
   ExceptionOutlined,
   HomeOutlined,
   PieChartOutlined,
-  ShoppingOutlined,
   TeamOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
@@ -21,7 +19,7 @@ import { useFetchData } from "../../hooks";
 import { getDashboardCardStats } from "../../api/services/Common";
 import { useEffect, useState } from "react";
 
-export const DataEntryDashboardPage = () => {
+export const SuperAdminDashBoard = () => {
   const stylesContext = useStylesContext();
   interface Stat {
     icon: React.ComponentType;

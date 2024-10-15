@@ -5,8 +5,9 @@ import {
   PieChartOutlined,
   SearchOutlined,
   UsergroupAddOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Logo } from "../../components";
+import { Logo, UserAvatar } from "../../components";
 import { Link, useLocation } from "react-router-dom";
 import { COLOR } from "../../App.tsx";
 import { PATH_HOME } from "../../constants/routes.ts";
@@ -34,7 +35,7 @@ const getItem = (
 
 const adminItems: MenuProps["items"] = [
   getItem(<Link to="/admin/dashboard">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
-  getItem("Customer", "customer", <PieChartOutlined />, [
+  getItem("Customer", "customer", <UserOutlined />, [
     getItem(<Link to="/admin/search-customer">Search Customer</Link>, "admin/search-customer", <SearchOutlined />),
   getItem(
     <Link to="/admin/register-customer">Customer Registration</Link>,
@@ -52,14 +53,14 @@ const adminItems: MenuProps["items"] = [
 
 const superAdminItems: MenuProps["items"] = [
   getItem(<Link to="/super-admin/dashboard">DashBoard</Link>,"dashboard" ,<PieChartOutlined />),
-  getItem("Customer", "customer", <PieChartOutlined />, [
+  getItem("Customer", "customer", <UserOutlined />, [
     getItem(<Link to="/super-admin/search-customer">Search Customer</Link>, "super-admin/search-customer", <SearchOutlined />),
   getItem(
     <Link to="/super-admin/register-customer">Customer Registration</Link>,
     "super-admin/register-customer", <UsergroupAddOutlined />,
   ),
   ]),
-  getItem("User", "user", <PieChartOutlined />, [
+  getItem("User", "user", <UserOutlined />, [
     getItem(<Link to="/super-admin/search-user">Search User</Link>, "super-admin/search-user", <SearchOutlined />),
   getItem(
     <Link to="/super-admin/register-user">User Registration</Link>,
@@ -132,8 +133,6 @@ const SideNav = ({ ...others }: SideNavProps) => {
     <Sider ref={nodeRef} breakpoint="lg" collapsedWidth="0" {...others}>
       <Logo
         color="black"
-        asLink
-        href={PATH_HOME.root}
         justify="center"
         gap="small"
         imgSize={{ h: 28, w: 28 }}

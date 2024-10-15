@@ -224,3 +224,8 @@ export const uploadVisaInfoamationToDb = async (formData: any, customerId: any) 
   const response = await api.post(`/api/customer/uploadCustomerDoc/${customerId}`, formData);
   return response.data;
 };
+
+export const getDashboardCardStats = async () => {
+  const response = await api.get(`/api/dashboard/getAllCustomerCount`);
+  return response.data;
+}

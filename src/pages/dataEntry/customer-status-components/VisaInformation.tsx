@@ -188,7 +188,7 @@ export const VisaInformation = ({ visaInfomationData }: PendingProps) => {
         customerId: customer.key,
         userId: user?.id,
         amount: values.amount,
-        stateId: 3,
+        stateId: 4,
         paymentSlipUrl,
       };
 
@@ -199,7 +199,7 @@ export const VisaInformation = ({ visaInfomationData }: PendingProps) => {
       // Retrieve user name or default to "Admin"
       const updaatedData = await getCustomerStateWiseDocDetails(
         customer.key,
-        3
+        4
       );
       setData(updaatedData.responseObject);
 
@@ -230,7 +230,7 @@ export const VisaInformation = ({ visaInfomationData }: PendingProps) => {
       // set the offer letter URL to the database
       const requestBody = {
         userId: user?.id,
-        stateId: 3,
+        stateId: 4,
         paymentSlipUrl: visaInfomationUrl,
       };
 
@@ -249,7 +249,7 @@ export const VisaInformation = ({ visaInfomationData }: PendingProps) => {
       if (response.httpStatusCode === 200) {
         const updaatedData = await getCustomerStateWiseDocDetails(
           customer.key,
-          3
+          4
         );
         setData(updaatedData.responseObject);
 

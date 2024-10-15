@@ -46,13 +46,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         // Redirect to the dashboard
         if (user.role.toLocaleLowerCase() === "admin") {
             // Redirect to the admin dashboard
-            navigate(PATH_ADMIN.root);
+            navigate(PATH_ADMIN.dashboard);
         } else if (user.role.toLocaleLowerCase() === "data entry") {
             // Redirect to the data entry dashboard
             navigate(PATH_DATA_ENTRY.dashbord);
         } else if (user.role.toLocaleLowerCase() === "super admin") {
             // Redirect to the super admin dashboard
-            navigate(PATH_SUPER_ADMIN.root);
+            navigate(PATH_SUPER_ADMIN.dashboard);
         }
     };
 

@@ -19,6 +19,7 @@ import {
   CustomerSearch,
   CustomerStatus,
   DataEntryDashboardPage,
+  SuperAdminDashBoard,
 } from "../pages";
 
 import {
@@ -212,7 +213,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "dashboard",
-        element: <SuperAdminPage />,
+        element: <SuperAdminDashBoard />,
       },
       {
         index: true,
