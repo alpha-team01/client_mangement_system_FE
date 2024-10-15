@@ -7,10 +7,9 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Logo, UserAvatar } from "../../components";
+import { Logo } from "../../components";
 import { Link, useLocation } from "react-router-dom";
 import { COLOR } from "../../App.tsx";
-import { PATH_HOME } from "../../constants/routes.ts";
 import { useAuth } from "../../context/AuthContext.tsx";
 
 const { Sider } = Layout;

@@ -1,5 +1,5 @@
 import { SuperAdminPage } from './SuperAdminPage';
-import { SuperAdminDashBoard } from './SuperAdminDashboard';
+import { SuperAdminDashboard } from './SuperAdminDashboard';
 export { SuperAdminPage};
-export { SuperAdminDashBoard};
+export { SuperAdminDashboard as SuperAdminDashBoard};
 

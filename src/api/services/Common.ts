@@ -229,3 +229,8 @@ export const getDashboardCardStats = async () => {
   const response = await api.get(`/api/dashboard/getAllCustomerCount`);
   return response.data;
 }
+
+export const getMonthlyStateDetails = async () => {
+  const response = await api.get(`/api/dashboard/monthlyStateDetailStats`)
+  return response.data;
+}

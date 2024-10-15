@@ -30,7 +30,7 @@ import {
 } from "../layouts";
 import React, { ReactNode, useEffect } from "react";
 import { AboutPage } from "../pages/About.tsx";
-import { AdminPage } from "../pages/admin/AdminPage.tsx";
+import { AdminDashboard, AdminPage } from "../pages/admin/AdminDashboard.tsx";
 import { SuperAdminPage } from "../pages/superAdmin/SuperAdminPage.tsx";
 import { AuthProvider } from "../context/AuthContext.tsx";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
@@ -163,7 +163,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "dashboard",
-        element: <AdminPage />,
+        element: <AdminDashboard />,
       },
       {
         index: true,
@@ -173,7 +173,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "register-user",
-        element: <RegisterUser />,
+        element: <RegisterUser />, //change this to RegisterUser
       },
       {
         index: true,

@@ -1,11 +1,13 @@
 import { HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import { PageHeader } from "../../components";
-import { Button, Card, Col, Form, Input, message, Table } from "antd";
+import { Button, Card, Col, Form, Input, message, Table, Tabs } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../types";
 import { getAllCustomers } from "../../api/services/Common";
+import moment from "moment";
+import { set } from "lodash";
 
 export const CustomerSearch = () => {
   // State for search input
@@ -13,9 +15,11 @@ export const CustomerSearch = () => {
 
   // State for filtered table data
   const [filteredData, setFilteredData] = useState<Customer[]>([]);
-  const [tableData, settableData] = useState<Customer[]>([]);
+  const [filerExpiringData, setFilterExpiringData] = useState<Customer[]>([]);
+  const [tableData, setTableData] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [expiringData, setExpiringData] = useState<Customer[]>([]); // Expiring police report data
   const navigate = useNavigate();
 
   const handleClickView = (record: Customer) => {
@@ -26,32 +30,44 @@ export const CustomerSearch = () => {
     setLoading(true);
     getAllCustomers()
       .then((res) => {
-        //  res.data.responseObject convert a json object to array
         const results = res.data.responseObject;
 
-        // Extract and map only the required fields from the response
-        console.log(results);
         const data = results.map((item: any) => {
-          // console.log(item);
+          
           return {
-            key: item.customerId, // Unique key for Ant Design Table
-            passportNo: item.passportNumber, // Required field
+            key: item.customerId,
+            passportNo: item.passportNumber,
+            policeReportExpDate: item.policeReportExpDate, // Store the issued date as a moment object
             status: {
-              title: item.step || "N/A", // Use "N/A" if step is null
-              description: item.step || "N/A", // Same for description
+              title: item.step || "N/A",
+              description: item.step || "N/A",
             },
-            actions: "View", // Static value for actions
+            actions: "View",
           };
         });
 
-        settableData(data); // Set the state with the new data
-        setFilteredData(data); // Step 2: Also set filteredData initially
-        setLoading(false); // Step 2: Set loading to false after data is fetched
+        setTableData(data);
+        setFilteredData(data);
+
+        // Filter for customers whose police reports will expire within a week
+        const now = moment();
+        const expiring = data.filter((item : any) => {
+          if (item.policeReportExpDate) {
+            const expDate = moment(item.policeReportExpDate);
+            console.log("Police report exp date:", item.policeReportExpDate);
+            return expDate.diff(now, "days") <= 7; // Check if the police report will expire within a week
+          }
+          return false; // Skip entries with null policeReportExpDate
+        });
+        setExpiringData(expiring);
+        setFilterExpiringData(expiring);
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
         message.error("Failed to fetch data");
+      }).finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -66,24 +82,25 @@ export const CustomerSearch = () => {
       title: "Current Status",
       key: "status",
       render: (text: any, record: Customer) => (
-        <>
-          <div>
-            <strong>{record.status.title}</strong>
-            <br />
-            <span>{record.status.description}</span>
-          </div>
-        </>
+        <div>
+          <strong>{record.status.title}</strong>
+          <br />
+          <span>{record.status.description}</span>
+        </div>
       ),
+    },
+    {
+      title: "Police Report Expiry Date",
+      dataIndex: "policeReportExpDate",
+      key: "policeReportExpDate",
     },
     {
       title: "Actions",
       dataIndex: "actions",
       render: (text: any, record: Customer) => (
-        <>
-          <Button onClick={() => handleClickView(record)} type="primary">
-            View
-          </Button>
-        </>
+        <Button onClick={() => handleClickView(record)} type="primary">
+          View
+        </Button>
       ),
     },
   ];
@@ -92,11 +109,22 @@ export const CustomerSearch = () => {
   useEffect(() => {
     const filtered = tableData.filter(
       (item) =>
-        item.passportNo.includes(searchTerm) || // Change here to use passportNo
+        item.passportNo.includes(searchTerm) ||
         item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
   }, [searchTerm, tableData]);
+
+  // Filter for customers whose police reports will expire within a week
+  useEffect(() => {
+    const filtered = expiringData.filter(
+      (item) =>
+        item.passportNo.includes(searchTerm) ||
+        item.status.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilterExpiringData(filtered);
+  }, [searchTerm, expiringData]);
+  
 
   // Handle input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,12 +173,25 @@ export const CustomerSearch = () => {
 
       <Col span={24}>
         <Card style={{ backgroundColor: "#fff" }}>
-          <Table<Customer>
-            columns={columns}
-            dataSource={filteredData}
-            pagination={{ pageSize: 5 }}
-            loading={loading}
-          />
+          <Tabs defaultActiveKey="1">
+            <Tabs.TabPane tab="All Customers" key="1">
+              <Table<Customer>
+                columns={columns}
+                dataSource={filteredData}
+                pagination={{ pageSize: 5 }}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab="Expiring Police Reports" key="2">
+              <Table<Customer>
+                columns={columns}
+                dataSource={filerExpiringData} // Display only expiring police reports data
+                pagination={{ pageSize: 5 }}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+          </Tabs>
         </Card>
       </Col>
     </div>

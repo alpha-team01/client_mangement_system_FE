@@ -6,22 +6,19 @@ import {
 } from "../../components";
 import {
   BlockOutlined,
-  CarOutlined,
   ExceptionOutlined,
   HomeOutlined,
   PieChartOutlined,
-  ShoppingOutlined,
   TeamOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import { useStylesContext } from "../../context";
 import { useAuth } from "../../context/AuthContext";
-import { useFetchData } from "../../hooks";
-import { getDashboardCardStats } from "../../api/services/Common";
+import { getDashboardCardStats, getMonthlyStateDetails } from "../../api/services/Common";
 import { useEffect, useState } from "react";
 
-export const DataEntryDashboardPage = () => {
+export const DataEntryDashboardPage = () => { // Remove async here
   const stylesContext = useStylesContext();
   interface Stat {
     icon: React.ComponentType;
@@ -32,54 +29,68 @@ export const DataEntryDashboardPage = () => {
 
   const [STATS, setSTATS] = useState<Stat[]>([]);
   const [loading, setLoading] = useState(true); // Add loading state
+  const [deliveryAnalyticsData, setDeliveryAnalyticsData] = useState(null); // Add state for delivery analytics data
+  const [deliveryAnalyticsDataLoading, setDeliveryAnalyticsDataLoading] = useState(true); // Add loading state for delivery analytics data
+  const [deliveryAnalyticsDataError, setDeliveryAnalyticsDataError] = useState<unknown>(null); // Add error state for delivery analytics data
   const { user } = useAuth();
 
   useEffect(() => {
-    setLoading(true); // Set loading to true before fetching data
-    getDashboardCardStats().then((res) => {
-      console.log("Dashboard stats:", res);
-      const data = res.responseObject;
+    const fetchData = async () => {
+      try {
+        setLoading(true); // Set loading to true before fetching data
+        const res = await getDashboardCardStats();
+        console.log("Dashboard stats:", res);
+        const data = res.responseObject;
 
-      // add property icon to each object
-      const stats = data.map((s: { title: string; value: number; diff: number | null; }) => {
-        let icon = null;
-        switch (s.title.toLowerCase()) {
-          case "total customers registered today":
-            icon = UsergroupAddOutlined;
-            break;
-          case "total customers":
-            icon = TeamOutlined;
-            break;
-          case "total customers with expiring police reports":
-            icon = ExceptionOutlined;
-            break;
-          default:
-            icon = BlockOutlined;
-        }
+        // add property icon to each object
+        const stats = data.map((s: { title: string; value: number; diff: number | null; }) => {
+          let icon = null;
+          switch (s.title.toLowerCase()) {
+            case "total customers registered today":
+              icon = UsergroupAddOutlined;
+              break;
+            case "total customers":
+              icon = TeamOutlined;
+              break;
+            case "total customers with expiring police reports":
+              icon = ExceptionOutlined;
+              break;
+            default:
+              icon = BlockOutlined;
+          }
 
-        return { ...s, icon };
-      });
+          return { ...s, icon };
+        });
 
-      setSTATS(stats);
-      console.log("STATS:", stats);
-      setLoading(false); // Set loading to false after data is loaded
-    }).catch((error) => {
-      console.error("Error fetching dashboard stats:", error);
-      setLoading(false); // Ensure loading is false even on error
-    });
+        setSTATS(stats);
+        console.log("STATS:", stats);
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      } finally {
+        setLoading(false); // Ensure loading is false after data is loaded or on error
+      }
+    };
+
+    const fetchDeliveryAnalytics = async () => {
+      try {
+        const res = await getMonthlyStateDetails();
+        setDeliveryAnalyticsData(res);
+      } catch (error) {
+        setDeliveryAnalyticsDataError(error);
+      } finally {
+        setDeliveryAnalyticsDataLoading(false);
+      }
+    };
+
+    fetchData();
+    fetchDeliveryAnalytics();
   }, []); // Empty dependency array to run only on mount
-
-  const {
-    data: deliveryAnalyticsData,
-    loading: deliveryAnalyticsDataLoading,
-    error: deliveryAnalyticsDataError,
-  } = useFetchData("../mocks/DeliveryAnalytics.json");
 
   // Show loading screen until all data is fetched
   if (loading || deliveryAnalyticsDataLoading) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
-        <Spin size="large" /> {/* Show loading spinner */}
+        <Spin size="large" />  {/*Show loading spinner*/}
         <p>Loading dashboard...</p> {/* Loading message */}
       </div>
     );
@@ -88,7 +99,7 @@ export const DataEntryDashboardPage = () => {
   return (
     <div>
       <Helmet>
-        <title>Dashboard </title>
+        <title>Dashboard</title>
       </Helmet>
       <PageHeader
         title={"Dashboard"}

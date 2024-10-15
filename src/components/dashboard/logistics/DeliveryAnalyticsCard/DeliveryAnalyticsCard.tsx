@@ -1,16 +1,15 @@
 import { Alert, CardProps } from 'antd';
 import { Column } from '@ant-design/charts';
-import { DeliveryAnalytics } from '../../../../types';
 import { ReactNode, useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import { Card, Loader } from '../../../index.ts';
 
 type ChartProps = {
-  data: DeliveryAnalytics[];
+  data: any[];
 };
 
 const MultiLineChart = ({ data }: ChartProps) => {
-  const [refinedData, setRefinedData] = useState<DeliveryAnalytics[]>([]);
+  const [refinedData, setRefinedData] = useState<any[]>([]);
 
   useEffect(() => {
     const formattedData = _.sortBy(data, (item) => {
@@ -79,9 +78,9 @@ const MultiLineChart = ({ data }: ChartProps) => {
 };
 
 type Props = {
-  data?: DeliveryAnalytics[];
+  data?: any[] | null;
   loading?: boolean;
-  error?: ReactNode;
+  error?: ReactNode | unknown;
 } & CardProps;
 
 export const DeliveryAnalyticsCard = ({
@@ -91,7 +90,7 @@ export const DeliveryAnalyticsCard = ({
   ...others
 }: Props) => {
   return (
-    <Card title="Analytics" {...others}>
+    <Card title="User Status Per Month" {...others}>
       {error ? (
         <Alert
           message="Error"
