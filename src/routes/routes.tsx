@@ -30,13 +30,17 @@ import {
 } from "../layouts";
 import React, { ReactNode, useEffect } from "react";
 import { AboutPage } from "../pages/About.tsx";
-import { AdminDashboard, AdminPage } from "../pages/admin/AdminDashboard.tsx";
+import { AdminDashboard } from "../pages/admin/AdminDashboard.tsx";
 import { SuperAdminPage } from "../pages/superAdmin/SuperAdminPage.tsx";
 import { AuthProvider } from "../context/AuthContext.tsx";
 import ProtectedRoute from "./ProtectedRoutes.tsx";
 import { PATH_DATA_ENTRY } from "../constants/routes.ts";
 import { RegisterUser } from "../pages/superAdmin/RegisterUser.tsx";
 import { UserStatus } from "../pages/superAdmin/UserStatus.tsx";
+import { AdminView } from "../pages/admin/AdminView.tsx";
+import { AdminCustomerReg } from "../pages/admin/adminCustomerReg.tsx";
+import { AdminRegisterUser } from "../pages/admin/adminRegisterUser.tsx";
+import { AdminUserSearch } from "../pages/admin/AdminUserSearch.tsx";
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -168,12 +172,12 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "search-user",
-        element: <SuperAdminPage />, // Change this to AdminPage
+        element: <AdminUserSearch />, // Change this to AdminPage
       },
       {
         index: true,
         path: "register-user",
-        element: <RegisterUser />, //change this to RegisterUser
+        element: <AdminRegisterUser  />, //change this to RegisterUser
       },
       {
         index: true,
@@ -183,12 +187,12 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "search-customer",
-        element: <CustomerSearch />,
+        element: <AdminView />,
       },
       {
         index: true,
         path: "register-customer",
-        element: <CustomerRegistration />,
+        element: <AdminCustomerReg/>,
       },
       {
         index: true,

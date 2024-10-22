@@ -1,7 +1,6 @@
 import {
     Button,
     Col,
-    Dropdown,
     Form,
     Input,
     Row,
@@ -25,11 +24,10 @@ import { useLocation } from "react-router-dom";
     lastName?:string,
     email?:string,
     password?:string,
-    role?:string,
   };
   
   
-  export const RegisterUser = () => {
+  export const AdminRegisterUser = () => {
     
 
     const context = useStylesContext();
@@ -122,17 +120,6 @@ import { useLocation } from "react-router-dom";
                     ]}
                   >
                     <Input />
-                  </Form.Item>
-                </Col>
-                <Col sm={10} lg={12}>
-                  <Form.Item<FieldType>
-                    label="Role"
-                    name="role"
-                    rules={[
-                      { required: true, message: "Please enter Password" },
-                    ]}
-                  >
-                    <Dropdown />
                   </Form.Item>
                 </Col>
 
